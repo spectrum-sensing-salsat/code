@@ -1,19 +1,18 @@
 import numpy as np
 from scipy import stats
 
-# TODO fill functions with life
 # TODO add more asserts on function arguments
 
+def get_thr(noise_power, pfa, n):
+    return np.sqrt(n) * noise_power * stats.norm.isf(pfa) + n * noise_power
 
-def get_thr(self, noise_power, p_fa, n):
-    pass
-    # return Util.signal_power(noise, dB=False)*(stats.norm.isf(p_fa)*np.sqrt(2.*n)+n)
+def get_pfa(noise_power, thr, n):
+    return stats.norm.sf((thr - n * noise_power) / (noise_power * np.sqrt(n)))
 
-def get_pfa(self):
-    pass
+def get_pd(noise_power, signal_power, thr, n):
+    return stats.norm.sf((thr - n * (noise_power + signal_power)) /
+                         (np.sqrt(n) * (noise_power + signal_power)))
 
-def get_pd(self):
-    pass
-
-def get_roc(self):
-    pass
+def get_roc(noise_power=None, signal_power=None, pfa=None, n=None):
+    # return stats.norm.sf((stats.norm.isf(pfa)-np.sqrt(n)*signal_power)/(noise_power + signal_power))
+    return stats.norm.sf((noise_power*stats.norm.isf(pfa)-signal_power*np.sqrt(n))/(noise_power + signal_power))
