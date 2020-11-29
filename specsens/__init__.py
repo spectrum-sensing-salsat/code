@@ -10,3 +10,4 @@ from specsens.energy_detect import clt_stats
 
 # Wideband Detection
 from specsens.wideband_detect.stft import Stft
+from specsens.wideband_detect.freq_energy_detector import FreqEnergyDetector
