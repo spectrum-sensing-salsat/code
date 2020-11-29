@@ -3,17 +3,14 @@ from scipy import stats
 
 # TODO add more asserts on function arguments
 
-def get_thr(noise_power, pfa, n):
-    return stats.chi2.ppf(1.-pfa, 2.*n)*noise_power/2.
-
-
 def get_pfa(noise_power, thr, n):
     return 1. - stats.chi2.cdf(2.*thr/noise_power, 2.*n)
-
 
 def get_pd(noise_power, signal_power, thr, n):
     return 1. - stats.chi2.cdf(2.*thr/(noise_power+signal_power), 2.*n)
 
+def get_thr(noise_power, pfa, n):
+    return stats.chi2.ppf(1.-pfa, 2.*n)*noise_power/2.
 
 def get_roc(noise_power=None, signal_power=None, pfa=None, n=None):
     # def get_roc(noise_power=None, signal_power=None, snr=None, pfa=None, n=None):

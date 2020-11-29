@@ -7,3 +7,6 @@ from specsens.signal.wireless_microphone import WirelessMicrophone
 from specsens.energy_detect.energy_detector import EnergyDetector
 from specsens.energy_detect import chi2_stats
 from specsens.energy_detect import clt_stats
+
+# Wideband Detection
+from specsens.wideband_detect.stft import Stft

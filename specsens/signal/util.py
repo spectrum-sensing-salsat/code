@@ -5,6 +5,11 @@ def round_power2(x):
     assert not np.iscomplex(x), 'x cannot be complex'
     return int(np.power(2., np.ceil(np.log2(x))))
 
+def is_power2(n):
+    '''Check least significant bit for power of two.'''
+    assert n > 0., 'n must be greater than 0'
+    return (n != 0) and (n & (n-1) == 0)
+
 def sample_time(f_sample, num_samples):
     assert f_sample > 0., 'f_sample must be greater than 0'
     assert num_samples > 0, 'num_samples must be greater than 0'
