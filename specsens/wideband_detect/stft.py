@@ -7,7 +7,7 @@ from specsens import util
 class Stft:
 
     def __init__(self, n=1024, window='flattop'):
-        assert util.is_power2(n)
+        assert ss.util.is_power2(n)
         self.n = n
         self.window = signal.get_window(window, self.n)
 
@@ -44,7 +44,7 @@ class Stft:
         tl = list()
         xl = list()
         if dB:
-            dB_func = lambda x : util.dB(x)
+            dB_func = lambda x : ss.util.dB(x)
         else:
             dB_func = lambda x : x
         for i, (f, x) in enumerate(self.psd(sig, f_sample)):
