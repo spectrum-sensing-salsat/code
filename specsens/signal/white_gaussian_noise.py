@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import stats
 
+
 class WhiteGaussianNoise:
     def __init__(self, f_sample=1000.0, n=None, t_sec=None):
         assert f_sample > 0., 'f_sample must be greater than 0'
@@ -21,5 +22,6 @@ class WhiteGaussianNoise:
         x = 10.**(dB / 10.)
         x = stats.multivariate_normal(mean=[0., 0.],
                                       cov=[[.5 * x, 0.], [0., .5 * x]])
-        x = x.rvs(size=self.num_samples).view(np.complex128).reshape(self.num_samples)
+        x = x.rvs(size=self.num_samples).view(
+            np.complex128).reshape(self.num_samples)
         return x

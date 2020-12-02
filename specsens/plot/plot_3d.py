@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d as mpl3d
 # from matplotlib import cm
 
+from specsens import Stft
 
 def clip2d(ps, lim_min, lim_max):
     (x, y) = np.shape(ps)
@@ -28,21 +29,25 @@ def crop2d(ps, f, t, n):
     return ps, f, t
 
 
-def plot3d(sig, f_sample, window='box', nfft=1024, clip=-60, smooth=None, crop=None, elev=30, azim=60):
-    f, t, ps = signal.spectrogram(sig,
-                                  f_sample,
-                                  return_onesided=False,
-                                  window=window,
-                                  nperseg=nfft,
-                                  nfft=nfft,
-                                  noverlap=0,
-                                  detrend=False,
-                                  scaling='density',
-                                  mode='psd')
+def plot3d(sig, f_sample, window='flattop', nfft=1024, clip=-60, smooth=None, crop=None, elev=30, azim=60, scipy=False):
+    if scipy:
+        f, t, ps = signal.spectrogram(sig,
+                                      f_sample,
+                                      return_onesided=False,
+                                      window=window,
+                                      nperseg=nfft,
+                                      nfft=nfft,
+                                      noverlap=0,
+                                      detrend=False,
+                                      scaling='density',
+                                      mode='psd')
+        f = fft.fftshift(f)
+        ps = fft.fftshift(ps, axes=0)
+        ps = 10.0 * np.log10(ps)
+    else:
+        sft = Stft(n=nfft, window=window)
+        f, t, ps = sft.spectogram(sig, f_sample, normalized=True, dB=True)
 
-    f = fft.fftshift(f)
-    ps = fft.fftshift(ps, axes=0)
-    ps = 10.0 * np.log10(ps)
     if clip is not None:
         ps = clip2d(ps, clip, 0)
     if smooth is not None:
