@@ -25,7 +25,7 @@ def get_signal_length(f_sample, t_sec):
     ''' Retruns the signals length in number of samples.'''
     assert f_sample > 0., 'f_sample must be greater than 0'
     assert t_sec > 0., 't_sec must be greater than 0'
-    return f_sample * t_sec
+    return int(f_sample * t_sec)
 
 
 def dB_power(x):
@@ -78,14 +78,3 @@ def signal_energy(x, t_sec):
     assert x.ndim == 1, 'x must have exactly 1 dimension'
     assert t_sec > 0., 't_sec must be greater than 0'
     return signal_power(x, dB=False) * t_sec
-
-
-def get_energy_from_psd(psd):
-    '''Returns the signal energy from a power spectral density.'''
-    return np.sum(psd)
-
-
-def get_power_from_psd(psd, f):
-    '''Returns the signal power from a power spectral density.'''
-    df = f[1] - f[0]
-    return np.sum(psd) * df
