@@ -12,6 +12,8 @@ from specsens.energy_detect import clt_stats
 # Wideband Detection
 from specsens.wideband_detect.stft import Stft
 from specsens.wideband_detect.freq_energy_detector import FreqEnergyDetector
+from specsens.wideband_detect.band_detect import band_detect
+from specsens.wideband_detect import util_psd
 
 # Plotting
 from specsens.plot.plot_3d import plot3d
