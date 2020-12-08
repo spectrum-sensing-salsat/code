@@ -4,6 +4,7 @@ from scipy import stats
 
 from specsens import WirelessMicrophone
 
+# TODO rename dB to power and add dB option
 
 class WidebandSignal():
     def __init__(self, num_samples=None, t_sec=None, num_bands=1, num_steps=1):

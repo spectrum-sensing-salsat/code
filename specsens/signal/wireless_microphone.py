@@ -1,5 +1,7 @@
 import numpy as np
 
+# TODO rename dB to power and add dB option
+
 
 class WirelessMicrophone:
     def __init__(self, f_sample, num_samples=None, t_sec=None):
@@ -23,18 +25,28 @@ class WirelessMicrophone:
         t = np.arange(self.num_samples) / self.f_sample
         x = np.exp(1.j *
                    (2. * np.pi * f_center * t + f_deviation / f_modulation *
-                    np.sin(2. * np.pi * f_modulation * t)))
+                    np.sin(2. * np.pi * f_modulation * t)) +
+                    2. * np.pi * np.random.random())
         x -= np.mean(x)  # remove bias
         x /= np.std(x)  # normalize
         x *= 10.**(dB / 20.)  # set power level
         return x
 
     def get_silent(self, f_center, dB=0.):
-        return self.get_signal(f_center=f_center, f_deviation=5000., f_modulation=32000., dB=dB)
+        return self.get_signal(f_center=f_center,
+                               f_deviation=5000.,
+                               f_modulation=32000.,
+                               dB=dB)
 
     def get_soft(self, f_center, dB=0.):
         '''Best option for general performance tests.'''
-        return self.get_signal(f_center=f_center, f_deviation=15000., f_modulation=3900., dB=dB)
+        return self.get_signal(f_center=f_center,
+                               f_deviation=15000.,
+                               f_modulation=3900.,
+                               dB=dB)
 
     def get_loud(self, f_center, dB=0.):
-        return self.get_signal(f_center=f_center, f_deviation=32600., f_modulation=13400., dB=dB)
+        return self.get_signal(f_center=f_center,
+                               f_deviation=32600.,
+                               f_modulation=13400.,
+                               dB=dB)

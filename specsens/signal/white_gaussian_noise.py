@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import stats
 
+# TODO rename dB to power and add dB option
 
 class WhiteGaussianNoise:
     def __init__(self, f_sample=1000.0, n=None, t_sec=None):
