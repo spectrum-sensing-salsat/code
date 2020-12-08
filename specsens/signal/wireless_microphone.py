@@ -30,7 +30,7 @@ class WirelessMicrophone:
         x -= np.mean(x)  # remove bias
         x /= np.std(x)  # normalize
         x *= 10.**(dB / 20.)  # set power level
-        return x
+        return np.asarray(x)
 
     def get_silent(self, f_center, dB=0.):
         return self.get_signal(f_center=f_center,

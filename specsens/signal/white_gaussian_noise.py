@@ -25,4 +25,4 @@ class WhiteGaussianNoise:
                                       cov=[[.5 * x, 0.], [0., .5 * x]])
         x = x.rvs(size=self.num_samples).view(
             np.complex128).reshape(self.num_samples)
-        return x
+        return np.asarray(x)
