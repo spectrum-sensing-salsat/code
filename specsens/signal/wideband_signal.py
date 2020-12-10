@@ -47,16 +47,16 @@ class WidebandSignal():
         for i in range(self.num_bands):
             band_sig = np.zeros([self.num_samples], dtype=np.complex128)
             f_center = (i + .5) * self.band_width - self.f_sample / 2.
-            dBs = self.smooth_dBs(
+            power = self.smooth_power(
                 np.repeat(mat[:, i], self.num_samples // self.num_steps))
-            sig += wm.get_soft(f_center, dBs)
+            sig += wm.get_soft(f_center, power, dB=True)
         return sig, self.f_sample
 
-    def smooth_dBs(self, dBs):
+    def smooth_power(self, power):
         sec_len = int(self.num_samples_per_step *
                       0.2)  # make the logistic 20% of the step length
         for i in range(1, self.num_steps):
-            sec = dBs[i * self.num_samples_per_step -
+            sec = power[i * self.num_samples_per_step -
                       sec_len // 2:i * self.num_samples_per_step +
                       sec_len // 2]
             left = np.mean(sec[0:len(sec) // 2])
@@ -70,7 +70,7 @@ class WidebandSignal():
             # plt.plot(x, sec, 'kx')
             # plt.plot(x, log, 'rx')
             # plt.show()
-            dBs[i * self.num_samples_per_step -
-                sec_len // 2:(i) * self.num_samples_per_step +
+            power[i * self.num_samples_per_step -
+                sec_len // 2:i * self.num_samples_per_step +
                 sec_len // 2] = log
-        return dBs
+        return power

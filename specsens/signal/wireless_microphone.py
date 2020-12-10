@@ -1,6 +1,6 @@
 import numpy as np
 
-# TODO rename dB to power and add dB option
+from specsens import util
 
 
 class WirelessMicrophone:
@@ -19,34 +19,40 @@ class WirelessMicrophone:
         else:
             assert False, 'either num_samples or t_sec needed'
 
-    def get_signal(self, f_center, f_deviation, f_modulation, dB=0.):
+    def get_signal(self, f_center, f_deviation, f_modulation, power=1., dB=True):
         assert f_deviation > 0., 'f_deviation must be greater than 0'
         assert f_modulation > 0., 'f_modulation must be greater than 0'
-        t = np.arange(self.num_samples) / self.f_sample
+        t = np.arange(self.num_samples) / self.f_sample  # time vector
         x = np.exp(1.j *
                    (2. * np.pi * f_center * t + f_deviation / f_modulation *
                     np.sin(2. * np.pi * f_modulation * t)) +
-                    2. * np.pi * np.random.random())
+                   2. * np.pi * np.random.random())  # random phase
         x -= np.mean(x)  # remove bias
         x /= np.std(x)  # normalize
-        x *= 10.**(dB / 20.)  # set power level
+        if dB:
+            x *= util.dB_to_factor(power)  # set power level using dB
+        else:
+            x *= power  # set power level using factor
         return np.asarray(x)
 
-    def get_silent(self, f_center, dB=0.):
+    def get_silent(self, f_center, power=1., dB=True):
         return self.get_signal(f_center=f_center,
                                f_deviation=5000.,
                                f_modulation=32000.,
+                               power=power,
                                dB=dB)
 
-    def get_soft(self, f_center, dB=0.):
+    def get_soft(self, f_center, power=1., dB=True):
         '''Best option for general performance tests.'''
         return self.get_signal(f_center=f_center,
                                f_deviation=15000.,
                                f_modulation=3900.,
+                               power=power,
                                dB=dB)
 
-    def get_loud(self, f_center, dB=0.):
+    def get_loud(self, f_center, power=1., dB=True):
         return self.get_signal(f_center=f_center,
                                f_deviation=32600.,
                                f_modulation=13400.,
+                               power=power,
                                dB=dB)

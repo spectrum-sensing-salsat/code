@@ -3,8 +3,8 @@ import numpy as np
 
 def round_power2(x):
     '''Round up to nearest power of two.'''
-    assert x > 0., 'x must be greater than 0'
-    assert not np.iscomplex(x), 'x cannot be complex'
+    assert np.all(x > 0.), 'x must be greater than 0'
+    assert np.all(np.isreal(x)), 'x cant be complex'
     return int(np.power(2., np.ceil(np.log2(x))))
 
 
@@ -30,27 +30,27 @@ def get_signal_length(f_sample, t_sec):
 
 def dB_power(x):
     '''Compute dB for power signals.'''
-    assert x > 0., 'x must be greater than 0'
-    assert not np.iscomplex(x), 'x cannot be complex'
+    assert np.all(x > 0.), 'x must be greater than 0'
+    assert np.all(np.isreal(x)), 'x cant be complex'
     return 10. * np.log10(x)
 
 
 def dB(x):
     '''Compute dB for amplitude signals.'''
-    assert x > 0., 'x must be greater than 0'
-    assert not np.iscomplex(x), 'x cannot be complex'
+    assert np.all(x > 0.), 'x must be greater than 0'
+    assert np.all(np.isreal(x)), 'x cant be complex'
     return 20. * np.log10(x)
 
 
 def dB_to_factor_power(x):
     '''Compute factor for power signals.'''
-    assert not np.iscomplex(x), 'x cannot be complex'
+    assert np.all(np.isreal(x)), 'x cant be complex'
     return 10.**(x / 10.)
 
 
 def dB_to_factor(x):
     '''Compute factor for amplitude signals.'''
-    assert not np.iscomplex(x), 'x cannot be complex'
+    assert np.all(np.isreal(x)), 'x cant be complex'
     return 10.**(x / 20.)
 
 

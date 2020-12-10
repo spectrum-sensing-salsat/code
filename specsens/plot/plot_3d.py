@@ -29,8 +29,8 @@ def crop2d(ps, f, t, n):
     return ps, f, t
 
 
-def plot3d(sig, f_sample, window='flattop', nfft=1024, clip=-60, smooth=None, crop=None, elev=30, azim=60, scipy=False):
-    if scipy:
+def plot3d(sig, f_sample, window='flattop', nfft=1024, clip=-60, smooth=None, crop=None, elev=30, azim=60, type='our', title=None):
+    if type == 'scipy':
         f, t, ps = signal.spectrogram(sig,
                                       f_sample,
                                       return_onesided=False,
@@ -44,9 +44,11 @@ def plot3d(sig, f_sample, window='flattop', nfft=1024, clip=-60, smooth=None, cr
         f = fft.fftshift(f)
         ps = fft.fftshift(ps, axes=0)
         ps = 10.0 * np.log10(ps)
-    else:
+    elif type == 'our':
         sft = Stft(n=nfft, window=window)
         f, t, ps = sft.spectogram(sig, f_sample, normalized=True, dB=True)
+    else:
+        assert False, 'unknown type'
 
     if clip is not None:
         ps = clip2d(ps, clip, 0)

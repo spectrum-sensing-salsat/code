@@ -1,7 +1,8 @@
 import numpy as np
 from scipy import stats
 
-# TODO rename dB to power and add dB option
+from specsens import util
+
 
 class WhiteGaussianNoise:
     def __init__(self, f_sample=1000.0, n=None, t_sec=None):
@@ -19,10 +20,13 @@ class WhiteGaussianNoise:
         else:
             assert False, 'either n or t_sec needed'
 
-    def get_signal(self, dB=0.):
-        x = 10.**(dB / 10.)
-        x = stats.multivariate_normal(mean=[0., 0.],
-                                      cov=[[.5 * x, 0.], [0., .5 * x]])
-        x = x.rvs(size=self.num_samples).view(
+    def get_signal(self, power=1., dB=True):
+        if dB:
+            x = util.dB_to_factor_power(power)  # set power level using dB
+        else:
+            x = power  # set power level using factor
+        stat = stats.multivariate_normal(mean=[0., 0.],
+                                         cov=[[.5 * x, 0.], [0., .5 * x]])
+        x = stat.rvs(size=self.num_samples).view(
             np.complex128).reshape(self.num_samples)
         return np.asarray(x)

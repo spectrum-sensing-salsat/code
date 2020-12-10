@@ -5,6 +5,7 @@ from scipy import stats
 
 from specsens import util
 
+
 def get_pfa(noise_power, thr, n, dB=True):
     if dB:
         noise_power = util.dB_to_factor_power(noise_power)
