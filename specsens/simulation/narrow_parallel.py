@@ -78,6 +78,9 @@ def sim_narrow_parallel(gens=100,
         p = mp.Pool(processes=mp.cpu_count())
         f = partial(iteration, f_sample, length_sec, signal_strength, noise_strength[i], threshold)
 
+        # Generate random seed for processes
+        randi = np.random.randint(0, 1000)
+        
         # Run itertations in parallel and store results in result array
         result = p.map(f, np.arange(randi, randi+itrs))
 
