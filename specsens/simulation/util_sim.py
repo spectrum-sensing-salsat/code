@@ -34,3 +34,18 @@ def print_convergence(gens, pfas, pds):
     plt.xlabel('Generations')
     plt.ylabel('Probability')
     plt.show()
+
+
+def print_distibution(en_sig, en_noise):
+    plt.figure(figsize=(8, 6))
+    plt.title('Distribution if signal present')
+    plt.hist(en_sig, bins=100)
+    plt.show()
+    print('Sig Mean=%.3f, Standard Deviation=%.3f' %
+          (np.mean(en_sig), np.std(en_sig)))
+
+    plt.title('Distribution if signal absent')
+    plt.hist(en_noise, bins=100)
+    plt.show()
+    print('Noise Mean=%.3f, Standard Deviation=%.3f' %
+          (np.mean(en_noise), np.std(en_noise)))

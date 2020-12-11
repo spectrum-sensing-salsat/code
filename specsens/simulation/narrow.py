@@ -75,8 +75,6 @@ def sim_narrow(gens=100,
     # Outer generations loop
     for i in range(gens):
 
-        print(f'at {i} noise is {noise_strength[i]}')
-
         # Run itertations and store results in result array
         result = np.array([])
         for j in range(itrs):

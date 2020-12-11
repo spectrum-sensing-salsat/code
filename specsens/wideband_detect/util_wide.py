@@ -24,11 +24,18 @@ def plot_matrix(mat, title=None):
     plt.colorbar()
     plt.show()
 
+def store_pic(pic, x, y, n=3, val=1., minimum=0, maximum=1.):
+    for i in range(n):
+        pic[np.maximum(y - (i+1), minimum), x] = val
+        pic[np.minimum(y + (i+1), maximum-1), x] = val
+    pic[y, x] = val
+    return pic
+
 def scale_matrix(mat, signal_length, band_width, fft_len):
     factor = signal_length*band_width/fft_len
     mat = np.repeat(mat, factor, axis=0)
     return mat, factor
-    
+
 def get_pfa(result, truth):
     truth = (truth == -100) * np.full_like(truth, 1.)
     result = truth * result
