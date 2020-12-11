@@ -1,17 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import multiprocessing as mp
-from functools import partial
-import tqdm
-import time
 
 from specsens import util
+from specsens import util_sim
 from specsens import WirelessMicrophone
 from specsens import WhiteGaussianNoise
 from specsens import EnergyDetector
 from specsens import chi2_stats
 
-def simulation(gens=100,
+
+def sim_narrow(gens=100,
                itrs=100,
                f_sample=1e6,
                signal_strength=0.,
@@ -46,6 +44,7 @@ def simulation(gens=100,
     print('Total Iters:    %d' % (gens * itrs))
     print('Signal power:   %.2f dB' % (signal_strength))
     print('Noise power:    %.2f dB' % (noise_strength))
+    print('Noise uncert.:  %.2f dB' % (noise_un))
     print('SNR:            %.2f dB' % (signal_strength - noise_strength))
     print('Signal length:  %.6f sec' % (length_sec))
     print('Signal samples: %d' % (num_samples))
@@ -66,33 +65,34 @@ def simulation(gens=100,
     pds = list()  # Probability of detection list
     current_time = None
 
+    # Calculate noise for each generation
+    noise_strength = np.random.normal(noise_strength, noise_un, gens)
+
+    # Create new signal objects
+    wm = WirelessMicrophone(f_sample=f_sample, t_sec=length_sec)
+    wgn = WhiteGaussianNoise(f_sample=f_sample, t_sec=length_sec)
+
     # Outer generations loop
     for i in range(gens):
 
-        # Add noise uncertainty
-        noise_strength += np.random.uniform(-noise_un, noise_un)
-        randi = np.random.randint(0, 1000)
+        print(f'at {i} noise is {noise_strength[i]}')
 
-        p = mp.Pool(processes=8)
-        f = partial(iteration, f_sample, length_sec, signal_strength, noise_strength, threshold)
-        result = p.map(f, np.arange(randi, randi+itrs))
-        p.close()
-        p.join()
+        # Run itertations and store results in result array
+        result = np.array([])
+        for j in range(itrs):
+            result = np.append(result, iteration(wm, wgn, signal_strength, noise_strength[i], threshold))
 
-        # result = np.array([])
-        # for j in range(itrs):
-        #     result = np.append(result, iteration(f_sample, length_sec, signal_strength, noise_strength, threshold, 0))
-
+        # Convert to numpy array
         result = np.asarray(result)
 
+        # Calculate statistics and store in arrays
         pfa_tmp = np.sum(result == 3) / (np.sum(result == 3) + np.sum(result == 4))
         pd_tmp = np.sum(result == 1) / (np.sum(result == 1) + np.sum(result == 2))
-
         pfas.append(pfa_tmp)
         pds.append(pd_tmp)
 
         # Print simulation progress
-        rem, percent, current_time = runtime_stats(current_time, gens, i)
+        rem, percent, current_time = util_sim.runtime_stats(current_time, gens, i)
         print('%6.2fs left at %5.2f%%' % (rem, percent))
 
     # Compute stats from lists
@@ -105,16 +105,11 @@ def simulation(gens=100,
     print('Prob detection theory   %.4f' % (theo_pd))
     print('Prob detection sim      %.4f' % (pd))
 
-    print_convergence(gens, pfas, pds)
+    util_sim.print_convergence(gens, pfas, pds)
     return pfa, pd
 
 
-def iteration(f_sample, length_sec, signal_strength, noise_strength, threshold, j):
-
-    np.random.seed(seed=j)
-
-    wm = WirelessMicrophone(f_sample=f_sample, t_sec=length_sec)
-    wgn = WhiteGaussianNoise(f_sample=f_sample, t_sec=length_sec)
+def iteration(wm, wgn, signal_strength, noise_strength, threshold):
 
     # Generate signal, center frequency does not matter with single band ED
     sig = wm.get_soft(f_center=1e5, power=signal_strength, dB=True)
@@ -145,35 +140,3 @@ def iteration(f_sample, length_sec, signal_strength, noise_strength, threshold, 
         return 3
     else:
         return 4
-
-def runtime_stats(current_time, total_itr, current_itr):
-    if current_time is None:  # First iteration cant predict time
-        current_time = time.time()
-        return float('inf'), 0.0, current_time
-    delta_time = time.time() - current_time
-    current_time = time.time()
-    remaining_itr = total_itr - current_itr
-    remaining_time = delta_time * remaining_itr
-    percent_done = current_itr / total_itr * 100.0
-    return remaining_time, percent_done, current_time
-
-
-def print_convergence(gens, pfas, pds):
-    plt.figure(figsize=(8, 6))
-    plt.title('Probability of false alarm')
-    plt.grid(linewidth=0.3)
-    for i in range(1, gens):
-        inter = np.sum(pfas[0:i]) / i
-        plt.plot(i, inter, 'kx')
-    plt.xlabel('Generations')
-    plt.ylabel('Probability')
-    plt.show()
-    plt.figure(figsize=(8, 6))
-    plt.title('Probability of detection')
-    plt.grid(linewidth=0.3)
-    for i in range(1, gens):
-        inter = np.sum(pds[0:i]) / i
-        plt.plot(i, inter, 'kx')
-    plt.xlabel('Generations')
-    plt.ylabel('Probability')
-    plt.show()

@@ -26,7 +26,7 @@ class WirelessMicrophone:
         x = np.exp(1.j *
                    (2. * np.pi * f_center * t + f_deviation / f_modulation *
                     np.sin(2. * np.pi * f_modulation * t)) +
-                   2. * np.pi * np.random.random())  # random phase
+                   2. * np.pi * np.random.random_sample())  # random phase
         x -= np.mean(x)  # remove bias
         x /= np.std(x)  # normalize
         if dB:
