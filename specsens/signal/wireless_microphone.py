@@ -56,3 +56,10 @@ class WirelessMicrophone:
                                f_modulation=13400.,
                                power=power,
                                dB=dB)
+
+    def get_very_silent(self, f_center, power=1., dB=True):
+        return self.get_signal(f_center=f_center,
+                               f_deviation=50.,
+                               f_modulation=32000.,
+                               power=power,
+                               dB=dB)
