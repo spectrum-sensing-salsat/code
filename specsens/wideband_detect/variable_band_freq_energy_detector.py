@@ -7,13 +7,14 @@ from specsens import chi2_stats
 
 
 class VariableBandFreqEnergyDetector():
-    def __init__(self, f_sample=1e6, fft_len=1024, freqs=None, noise_power=0., pfa=0.1, smooth=10., scale=5, min_height=0.2):
+    def __init__(self, f_sample=1e6, fft_len=1024, freqs=None, noise_power=0., pfa=0.1, smooth=10., scale=5, min_height=0.2, min_freq=3e4):
         self.f_sample = f_sample  # sample rate used with the
         self.fft_len = fft_len  # length of the fft used to compute the power spectrum
         self.freqs = freqs  # frequency band, x axis, used by the power spectrum
         self.noise_power = noise_power  # power of noise in dB
         self.pfa = pfa  # probability of false alarm
         self.ps_list = np.zeros(shape=(fft_len, 0))  # list to smooth power spectrum
+        self.min_freq = min_freq  # minimum distance between to edges
 
     def ps_smooth(self, ps):
         if np.size(self.ps_list, 1) >= 10:
@@ -35,7 +36,7 @@ class VariableBandFreqEnergyDetector():
                                         self.freqs,
                                         scale=5,
                                         min_height=0.2,
-                                        min_freq=3e4)
+                                        min_freq=self.min_freq)
         dics = self.energys(peak, ps)
         dics = {k: v for k, v in dics.items() if self.threshold(v)}
         return ps, peak, peakf, dics
