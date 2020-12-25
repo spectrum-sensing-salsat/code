@@ -3,7 +3,6 @@ from scipy import signal
 from scipy import fft
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from varname import nameof
 
 from specsens import util
 from specsens import Stft
