@@ -24,3 +24,6 @@ from specsens.plot.plot_2d import plot2d
 from specsens.simulation import util_sim
 from specsens.simulation.narrow_parallel import sim_narrow_parallel
 from specsens.simulation.narrow import sim_narrow
+
+# Eigenvalue
+from specsens.eigenvalue.tracy_widom import TracyWidom
