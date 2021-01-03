@@ -22,7 +22,7 @@ from specsens.plot.plot_2d import plot2d
 
 # Simulation
 from specsens.simulation import util_sim
-from specsens.simulation.narrow_parallel import sim_narrow_parallel
+from specsens.simulation.narrow_par import sim_narrow_par
 from specsens.simulation.narrow import sim_narrow
 
 # Eigenvalue

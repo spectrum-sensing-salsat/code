@@ -15,14 +15,14 @@ def is_power2(n):
 
 
 def sample_time(f_sample, num_samples):
-    ''' Retruns the total signal time in seconds.'''
+    ''' Returns the total signal time in seconds.'''
     assert f_sample > 0., 'f_sample must be greater than 0'
     assert num_samples > 0, 'num_samples must be greater than 0'
     return num_samples / f_sample
 
 
-def get_signal_length(f_sample, t_sec):
-    ''' Retruns the signals length in number of samples.'''
+def signal_length(f_sample, t_sec):
+    ''' Returns the signal length in number of samples.'''
     assert f_sample > 0., 'f_sample must be greater than 0'
     assert t_sec > 0., 't_sec must be greater than 0'
     return int(f_sample * t_sec)
@@ -66,7 +66,7 @@ def signal_power(x, dB=True):
 def snr(x, w, dB=True):
     '''Returns the signal to noise ratio between x and w.'''
     assert x.ndim == 1, 'x must have exactly 1 dimension'
-    assert w.ndim == 1, 'y must have exactly 1 dimension'
+    assert w.ndim == 1, 'w must have exactly 1 dimension'
     snr = signal_power(x, dB=False) / signal_power(w, dB=False)
     if dB:
         snr = dB_power(snr)

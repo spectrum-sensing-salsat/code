@@ -1,10 +1,8 @@
 import numpy as np
-from scipy import signal
 from scipy import stats
 
 from specsens import WirelessMicrophone
 
-# TODO rename dB to power and add dB option
 
 class WidebandSignal():
     def __init__(self, num_samples=None, t_sec=None, num_bands=1, num_steps=1):
@@ -36,7 +34,7 @@ class WidebandSignal():
             'Created WidebandSignal with %.1f MHz total bandwidth and %d samples per step'
             % (self.f_sample / 1e6, self.num_samples_per_step))
 
-    def get_signal(self, mat):
+    def signal(self, mat, dB=True):
         assert (
             self.num_steps,
             self.num_bands) == np.shape(mat), 'Matrix dimensions do not match'
@@ -49,7 +47,7 @@ class WidebandSignal():
             f_center = (i + .5) * self.band_width - self.f_sample / 2.
             power = self.smooth_power(
                 np.repeat(mat[:, i], self.num_samples // self.num_steps))
-            sig += wm.get_soft(f_center, power, dB=True)
+            sig += wm.soft(f_center, power, dB=dB)
         return sig, self.f_sample
 
     def smooth_power(self, power):
@@ -57,8 +55,8 @@ class WidebandSignal():
                       0.2)  # make the logistic 20% of the step length
         for i in range(1, self.num_steps):
             sec = power[i * self.num_samples_per_step -
-                      sec_len // 2:i * self.num_samples_per_step +
-                      sec_len // 2]
+                        sec_len // 2:i * self.num_samples_per_step +
+                        sec_len // 2]
             left = np.mean(sec[0:len(sec) // 2])
             right = np.mean(sec[len(sec) // 2:-1])
             diff = right - left
@@ -71,6 +69,6 @@ class WidebandSignal():
             # plt.plot(x, log, 'rx')
             # plt.show()
             power[i * self.num_samples_per_step -
-                sec_len // 2:i * self.num_samples_per_step +
-                sec_len // 2] = log
+                  sec_len // 2:i * self.num_samples_per_step +
+                  sec_len // 2] = log
         return power

@@ -4,7 +4,7 @@ import time
 
 
 def runtime_stats(current_time, total_itr, current_itr):
-    if current_time is None:  # First iteration cant predict time
+    if current_time is None:  # first iteration cant predict time
         current_time = time.time()
         return float('inf'), 0.0, current_time
     delta_time = time.time() - current_time
@@ -17,35 +17,35 @@ def runtime_stats(current_time, total_itr, current_itr):
 
 def print_convergence(gens, pfas, pds):
     plt.figure(figsize=(8, 6))
-    plt.title('Probability of false alarm')
     plt.grid(linewidth=0.3)
     for i in range(1, gens):
-        inter = np.sum(pfas[0:i]) / i
-        plt.plot(i, inter, 'kx')
-    plt.xlabel('Generations')
-    plt.ylabel('Probability')
+        inter = np.mean(pfas[0:i])
+        plt.plot(i, inter, 'ko', markersize=1, aa=True)
+    plt.axhline(np.mean(pfas), xmin=0., xmax=1., color='k', ls='--', alpha=0.5)
+    plt.xlabel(r'Generations')
+    plt.ylabel(r'$P_{fa}$ (Probability of false alarm)')
     plt.show()
     plt.figure(figsize=(8, 6))
-    plt.title('Probability of detection')
     plt.grid(linewidth=0.3)
     for i in range(1, gens):
-        inter = np.sum(pds[0:i]) / i
-        plt.plot(i, inter, 'kx')
-    plt.xlabel('Generations')
-    plt.ylabel('Probability')
+        inter = np.mean(pds[0:i])
+        plt.plot(i, inter, 'ko', markersize=1, aa=True)
+    plt.axhline(np.mean(pds), xmin=0., xmax=1., color='k', ls='--', alpha=0.5)
+    plt.xlabel(r'Generations')
+    plt.ylabel(r'$P_d$ (Probability of detection)')
     plt.show()
 
 
-def print_distibution(en_sig, en_noise):
+def print_distibution(eng_sig, eng_noise, bins=100):
     plt.figure(figsize=(8, 6))
-    plt.title('Distribution if signal present')
-    plt.hist(en_sig, bins=100)
+    plt.title(r'Distribution when signal present')
+    plt.hist(eng_sig, bins=bins)
     plt.show()
     print('Sig Mean=%.3f, Standard Deviation=%.3f' %
-          (np.mean(en_sig), np.std(en_sig)))
+          (np.mean(eng_sig), np.std(eng_sig)))
 
-    plt.title('Distribution if signal absent')
-    plt.hist(en_noise, bins=100)
+    plt.title(r'Distribution when signal absent')
+    plt.hist(eng_noise, bins=bins)
     plt.show()
     print('Noise Mean=%.3f, Standard Deviation=%.3f' %
-          (np.mean(en_noise), np.std(en_noise)))
+          (np.mean(eng_noise), np.std(eng_noise)))

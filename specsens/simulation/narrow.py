@@ -12,15 +12,16 @@ from specsens import chi2_stats
 def sim_narrow(gens=100,
                itrs=100,
                f_sample=1e6,
-               signal_strength=0.,
-               noise_strength=0.,
+               signal_power=0.,
+               noise_power=0.,
                length_sec=None,
                num_samples=None,
                theo_pfa=0.1,
                threshold=None,
-               noise_un=0.):
+               noise_uncert=0.,
+               seed=None):
 
-    # Check and calculate length, in seconds and number of samples
+    # check and calculate length, in seconds and number of samples
     if num_samples is not None:
         assert num_samples > 0., 'num_samples must be greater than 0'
         length_sec = num_samples / f_sample
@@ -31,29 +32,31 @@ def sim_narrow(gens=100,
     else:
         assert False, 'either num_samples or length_sec needed'
 
-    # Calculate threshold
+    # calculate threshold
     if threshold is None:
-        threshold = chi2_stats.get_thr(noise_power=noise_strength,
-                                          pfa=theo_pfa,
-                                          n=num_samples,
-                                          dB=True)
+        threshold = chi2_stats.thr(noise_power=noise_power,
+                                   pfa=theo_pfa,
+                                   n=num_samples,
+                                   dB=True)
 
     print('---- Simulation parameter ----')
     print('Generations:    %d' % (gens))
     print('Iterations:     %d' % (itrs))
-    print('Total Iters:    %d' % (gens * itrs))
-    print('Signal power:   %.2f dB' % (signal_strength))
-    print('Noise power:    %.2f dB' % (noise_strength))
-    print('Noise uncert.:  %.2f dB' % (noise_un))
-    print('SNR:            %.2f dB' % (signal_strength - noise_strength))
+    print('Total iters:    %d' % (gens * itrs))
+    print('Signal power:   %.2f dB' % (signal_power))
+    print('Noise power:    %.2f dB' % (noise_power))
+    print('Noise uncert:   %.2f dB' % (noise_uncert))
+    print('SNR:            %.2f dB' % (signal_power - noise_power))
     print('Signal length:  %.6f sec' % (length_sec))
     print('Signal samples: %d' % (num_samples))
 
-    theo_pd = chi2_stats.get_pd(noise_strength,
-                                   signal_strength,
-                                   threshold,
-                                   num_samples,
-                                   dB=True)
+    # calculate pd (only needed for prints)
+    theo_pd = chi2_stats.pd(noise_power,
+                            signal_power,
+                            threshold,
+                            num_samples,
+                            dB=True)
+
     print('---- Simulation stats theory ----')
     print('Prob false alarm %.4f' % (theo_pfa))
     print('Prob detection   %.4f' % (theo_pd))
@@ -61,39 +64,76 @@ def sim_narrow(gens=100,
 
     print('---- Running simulation ----')
 
-    pfas = list()  # Probability of false alarm list
-    pds = list()  # Probability of detection list
-    current_time = None
+    pfas = list()  # probability of false alarm list
+    pds = list()  # probability of detection list
+    current_time = None  # time variable used for 'runtime_stats'
 
-    # Calculate noise for each generation
-    noise_strength = np.random.normal(noise_strength, noise_un, gens)
+    # generate child seeds for wm and wgn
+    ss = np.random.SeedSequence(seed)
+    seeds = list(zip(ss.spawn(gens), ss.spawn(gens)))
 
-    # Create new signal objects
-    wm = WirelessMicrophone(f_sample=f_sample, t_sec=length_sec)
-    wgn = WhiteGaussianNoise(f_sample=f_sample, t_sec=length_sec)
-
-    # Outer generations loop
+    # outer 'generations' loop
     for i in range(gens):
 
-        # Run itertations and store results in result array
-        result = np.array([])
-        for j in range(itrs):
-            result = np.append(result, iteration(wm, wgn, signal_strength, noise_strength[i], threshold))
+        # create new signal objects
+        wm = WirelessMicrophone(f_sample=f_sample, t_sec=length_sec, seed=seeds[i][0])
+        wgn = WhiteGaussianNoise(f_sample=f_sample, t_sec=length_sec, seed=seeds[i][1])
 
-        # Convert to numpy array
+        # calculate noise power with uncertainty
+        gen_noise_power = np.random.normal(noise_power, noise_uncert)
+
+        # run itertations and store results in 'result' array
+        result = np.array([])
+
+        # inner 'interations' loop
+        for j in range(itrs):
+
+            # generate signal (center frequency does not matter with simple ED)
+            sig = wm.soft(f_center=1e5, power=signal_power, dB=True)
+
+            # generate noise
+            noise = wgn.signal(power=gen_noise_power, dB=True)
+
+            # randomly decide whether signal should be present
+            sig_present = bool(np.random.randint(2))
+            if sig_present:
+                both = sig + noise
+            else:
+                both = noise
+
+            # classic (single band) energy detector
+            eng = EnergyDetector.get(both)
+
+            # threshold
+            sig_detected = eng > threshold
+
+            # log detection outcome
+            if sig_present and sig_detected:
+                result = np.append(result, 1)
+            elif sig_present and not sig_detected:
+                result = np.append(result, 2)
+            elif not sig_present and sig_detected:
+                result = np.append(result, 3)
+            else:
+                result = np.append(result, 4)
+
+        # convert to numpy array
         result = np.asarray(result)
 
-        # Calculate statistics and store in arrays
-        pfa_tmp = np.sum(result == 3) / (np.sum(result == 3) + np.sum(result == 4))
-        pd_tmp = np.sum(result == 1) / (np.sum(result == 1) + np.sum(result == 2))
+        # calculate statistics and store in arrays
+        pfa_tmp = np.sum(result == 3) / (np.sum(result == 3) +
+                                         np.sum(result == 4))
+        pd_tmp = np.sum(result == 1) / (np.sum(result == 1) +
+                                        np.sum(result == 2))
         pfas.append(pfa_tmp)
         pds.append(pd_tmp)
 
         # Print simulation progress
-        rem, percent, current_time = util_sim.runtime_stats(current_time, gens, i)
+        rem, percent, current_time = util_sim.runtime_stats(
+            current_time, gens, i)
         print('%6.2fs left at %5.2f%%' % (rem, percent))
 
-    # Compute stats from lists
+    # compute stats from lists
     pfa = np.sum(pfas) / gens
     pd = np.sum(pds) / gens
 
@@ -103,38 +143,7 @@ def sim_narrow(gens=100,
     print('Prob detection theory   %.4f' % (theo_pd))
     print('Prob detection sim      %.4f' % (pd))
 
+    # print the convergence diagrams
     util_sim.print_convergence(gens, pfas, pds)
+
     return pfa, pd
-
-
-def iteration(wm, wgn, signal_strength, noise_strength, threshold):
-
-    # Generate signal, center frequency does not matter with single band ED
-    sig = wm.get_soft(f_center=1e5, power=signal_strength, dB=True)
-
-    # Generate noise
-    noise = wgn.get_signal(power=noise_strength,
-                           dB=True)
-
-    # Randomly decide whether signal should be present
-    sig_present = bool(np.random.randint(2))
-    if sig_present:
-        both = sig + noise
-    else:
-        both = noise
-
-    # Classic (single band) energy detector
-    eng = EnergyDetector.get(both)
-
-    # Threshold
-    sig_detected = eng > threshold
-
-    # Log signal and detection outcome
-    if sig_present and sig_detected:
-        return 1
-    elif sig_present and not sig_detected:
-        return 2
-    elif not sig_present and sig_detected:
-        return 3
-    else:
-        return 4
