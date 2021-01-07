@@ -74,18 +74,19 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
     return pfa_tmp, pd_tmp, energy, result
 
 
-def narrowband_sim(gens=100,
-                   itrs=100,
-                   f_sample=1e6,
-                   signal_power=0.,
-                   noise_power=0.,
-                   length_sec=None,
-                   num_samples=None,
-                   theo_pfa=0.1,
-                   threshold=None,
-                   noise_uncert=0.,
-                   seed=None,
-                   num_procs=None):
+def narrowband_sim(
+    gens=50,  # generations, number of environments
+    itrs=300,  # iterations, number of tests in each environment
+    f_sample=1e6,  # in Hz
+    signal_power=0.,  # in dB
+    noise_power=0.,  # in dB
+    length_sec=None,  # length of each section in seconds
+    num_samples=None,  # number of samples
+    theo_pfa=0.1,  # probability of false alarm
+    threshold=None,  # threshold used for detection
+    noise_uncert=0.0,  # standard deviation of the noise normal distribution
+    seed=None,  # random seed used for rng
+    num_procs=None):  # number of processes to run in parallel
 
     # set number of processes used
     if num_procs is None:

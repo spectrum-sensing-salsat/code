@@ -9,12 +9,14 @@ from specsens import util
 from specsens import util_sim
 from specsens import WirelessMicrophone
 from specsens import WhiteGaussianNoise
-from specsens import EnergyDetector
+from specsens import WidebandEnergyDetector
+from specsens import Stft
 from specsens import chi2_stats
 
 
 def generation(f_sample, length_sec, itrs, noise_power, signal_power,
-               noise_uncert, threshold, seeds):
+               noise_uncert, threshold, window, fft_len, num_bands, f_center,
+               band_to_detect, seeds):
 
     # create new signal objects
     wm = WirelessMicrophone(f_sample=f_sample, t_sec=length_sec, seed=seeds[0])
@@ -33,7 +35,7 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
     for _ in range(itrs):
 
         # generate signal (center frequency does not matter with simple ED)
-        sig = wm.soft(f_center=1e5, power=signal_power, dB=True)
+        sig = wm.soft(f_center=f_center, power=signal_power, dB=True)
 
         # generate noise
         noise = wgn.signal(power=gen_noise_power, dB=True)
@@ -45,8 +47,21 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
         else:
             both = noise
 
-        # classic (single band) energy detector
-        eng = EnergyDetector.get(both)
+        # create a Short Time Fourier Transform object
+        sft = Stft(n=fft_len, window=window)
+
+        # use the stft to transform the signal into the frequency domain
+        f, psd = sft.stft(both, f_sample, normalized=False, dB=False)
+
+        # create a Wideband Energy Detector object
+        fed = WidebandEnergyDetector(num_bands=num_bands,
+                                     f_sample=f_sample,
+                                     fft_len=fft_len,
+                                     freqs=f)
+
+        # compute energy for all bands but only use 'band_to_detect'
+        # reverse psd in order to fit channel order
+        eng = fed.detect(psd)[band_to_detect]
 
         # threshold
         sig_detected = eng > threshold
@@ -74,18 +89,24 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
     return pfa_tmp, pd_tmp, energy, result
 
 
-def narrowband_sim(gens=100,
-                   itrs=100,
-                   f_sample=1e6,
-                   signal_power=0.,
-                   noise_power=0.,
-                   length_sec=None,
-                   num_samples=None,
-                   theo_pfa=0.1,
-                   threshold=None,
-                   noise_uncert=0.,
-                   seed=None,
-                   num_procs=None):
+def wideband_sim(
+    gens=50,  # generations, number of environments
+    itrs=300,  # iterations, number of tests in each environment
+    f_sample=1e6,  # in Hz
+    signal_power=0.,  # in dB
+    noise_power=0.,  # in dB
+    length_sec=None,  # length of each section in seconds
+    num_samples=None,  # number of samples
+    theo_pfa=0.1,  # probability of false alarm
+    threshold=None,  # threshold used for detection
+    noise_uncert=0.0,  # standard deviation of the noise normal distribution
+    seed=None,  # random seed used for rng
+    num_procs=None,  # number of processes to run in parallel
+    window='box',  # window used with fft
+    fft_len=1024,  # samples used for fft
+    num_bands=1,  # total number of bands
+    f_center=-1e5,  # signal center frequency
+    band_to_detect=0):  # band to 'search' for signal in
 
     # set number of processes used
     if num_procs is None:
@@ -108,7 +129,7 @@ def narrowband_sim(gens=100,
     if threshold is None:
         threshold = chi2_stats.thr(noise_power=noise_power,
                                    pfa=theo_pfa,
-                                   n=num_samples,
+                                   n=fft_len // num_bands,
                                    dB=True)
 
     print('---- Simulation parameters ----')
@@ -126,8 +147,9 @@ def narrowband_sim(gens=100,
     theo_pd = chi2_stats.pd(noise_power,
                             signal_power,
                             threshold,
-                            num_samples,
-                            dB=True)
+                            fft_len // num_bands,
+                            dB=True,
+                            num_bands=num_bands)
 
     print('---- Simulation stats theory ----')
     print('Prob false alarm %.4f' % (theo_pfa))
@@ -148,7 +170,8 @@ def narrowband_sim(gens=100,
     # prepare parallel execution
     p = mp.Pool(processes=num_procs)
     f = partial(generation, f_sample, length_sec, itrs, noise_power,
-                signal_power, noise_uncert, threshold)
+                signal_power, noise_uncert, threshold, window, fft_len,
+                num_bands, f_center, band_to_detect)
 
     # run simulation while showing progress bar
     res = list(tqdm.tqdm(p.imap(f, seeds), total=gens))
@@ -181,7 +204,8 @@ def narrowband_sim(gens=100,
     util_sim.print_convergence(gens, pfas, pds, theo_pfa, theo_pd)
 
     # print energy distributions
-    util_sim.print_distribution(engs_both, engs_noise, num_samples,
-                                signal_power, noise_power, threshold)
+    util_sim.print_distribution(engs_both, engs_noise, fft_len // num_bands,
+                                signal_power, noise_power, threshold,
+                                num_bands)
 
     return pfa, pd

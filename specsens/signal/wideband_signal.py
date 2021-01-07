@@ -12,7 +12,8 @@ class WidebandSignal():
                  t_sec=None,
                  num_bands=1,
                  num_steps=1,
-                 seed=None):
+                 seed=None,
+                 band_width=1e5):
         '''
         WidebandSignal is currently only supporting 100kHz wide bands.
         By supplying a number of bands (num_bands),
@@ -21,7 +22,7 @@ class WidebandSignal():
 
         assert num_bands > 0, 'num_bands must be greater than 0'
         self.num_bands = num_bands
-        self.band_width = 1e5
+        self.band_width = band_width
         self.f_sample = self.band_width * num_bands
 
         if num_samples is not None:
@@ -51,8 +52,8 @@ class WidebandSignal():
         '''
 
         assert (
-            self.num_steps,
-            self.num_bands) == np.shape(mat), 'Matrix dimensions do not match'
+            self.num_bands,
+            self.num_steps) == np.shape(mat), 'Matrix dimensions do not match'
 
         # create 'WirelessMicrophone' used to generate all signal samples
         wm = WirelessMicrophone(f_sample=self.f_sample,

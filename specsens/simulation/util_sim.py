@@ -53,9 +53,19 @@ def print_distribution(eng_both,
                        signal_power,
                        noise_power,
                        threshold,
+                       num_bands,
                        bins=100):
 
     plt.figure(figsize=(8, 6))
+
+    # histogram if we had no information about what is what
+    # plt.hist(np.concatenate((eng_both, eng_noise)),
+    #          bins,
+    #          density=True,
+    #          color='black',
+    #          alpha=0.5,
+    #          aa=True,
+    #          label='No information')
 
     # histograms from simulations
     plt.hist(eng_both,
@@ -84,7 +94,7 @@ def print_distribution(eng_both,
 
     # compute powers
     noise_pow = util.dB_to_factor_power(noise_power)
-    both_pow = noise_pow + util.dB_to_factor_power(signal_power)
+    both_pow = noise_pow + util.dB_to_factor_power(signal_power) * num_bands
 
     # CLT pdfs
     noise_dist = stats.norm.pdf(x,

@@ -30,7 +30,7 @@ from specsens.plot.spectrum_plot_3d import spectrum_plot_3d
 
 # Simulation
 from specsens.simulation.narrowband_sim import narrowband_sim
-# from specsens.simulation.wideband_sim import wideband_sim
+from specsens.simulation.wideband_sim import wideband_sim
 # from specsens.simulation.estimation_sim import estimation_sim
 # from specsens.simulation.eigenvalue_sim import eigenvalue_sim
 # from specsens.simulation.combined_sim import combined_sim

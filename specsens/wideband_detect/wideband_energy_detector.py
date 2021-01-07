@@ -22,14 +22,12 @@ class WidebandEnergyDetector():
     def bands(self, ps):
         f_bands = []
         ps_bands = []
-
         # loop over all bands
         for i in range(int(self.num_bands)):
             idx1 = int(i * self.di)  # start of band
             idx2 = int((i + 1) * self.di)  #  end of band
             f_bands.append(self.freqs[idx1:idx2])  # frequency band list
             ps_bands.append(ps[idx1:idx2])  # power spectrum band list
-
         return f_bands, ps_bands
 
     def detect(self, ps):

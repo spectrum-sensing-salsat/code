@@ -31,7 +31,7 @@ def plot_matrix(mat, title=None, xlabel='Time', ylabel='Band', plabel=None, bina
     plt.show()
 
 def store_pic(pic, x, y, n=3, val=1., minimum=0, maximum=1.):
-    assert False
+    '''Helper funtion to store spectral pictures.'''
     for i in range(n):
         pic[np.maximum(y - (i+1), minimum), x] = val
         pic[np.minimum(y + (i+1), maximum-1), x] = val
