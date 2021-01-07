@@ -2,11 +2,11 @@ import numpy as np
 from scipy import signal
 from scipy import fft
 
-from specsens import band_detect
+from specsens import edge_detector
 from specsens import chi2_stats
 
 
-class VariableBandFreqEnergyDetector():
+class VariableBandEnergyDetector():
     def __init__(self, f_sample=1e6, fft_len=1024, freqs=None, noise_power=0., pfa=0.1, smooth=10., scale=5, min_height=0.2, min_freq=3e4):
         self.f_sample = f_sample  # sample rate used with the
         self.fft_len = fft_len  # length of the fft used to compute the power spectrum
@@ -32,16 +32,16 @@ class VariableBandFreqEnergyDetector():
     def detect(self, ps):
         ps = self.ps_smooth(ps)
         ps_dB = 10. * np.log10(ps)
-        prod, peak, peakf = band_detect(ps_dB,
+        prod, peak, peakf = edge_detector(ps_dB,
                                         self.freqs,
                                         scale=5,
                                         min_height=0.2,
                                         min_freq=self.min_freq)
-        dics = self.energys(peak, ps)
+        dics = self.energies(peak, ps)
         dics = {k: v for k, v in dics.items() if self.threshold(v)}
         return ps, peak, peakf, dics
 
-    def energys(self, peak, ps):
+    def energies(self, peak, ps):
         energ = {}
         if len(peak) == 0:
             return energ

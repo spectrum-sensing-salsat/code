@@ -13,7 +13,7 @@ def expand_edges(x, percent):
     return x, percent_len
 
 
-def band_detect(spec, freq, scale=4, min_height=0.1, min_freq=1e4):
+def edge_detector(spec, freq, scale=4, min_height=0.1, min_freq=1e4):
     sig, m = expand_edges(
         spec, 0.1)  # expand the spectrum at the edges by 0.1 percent
     # powers of 2 used for the multiscale product

@@ -1,5 +1,6 @@
 import numpy as np
-
+import math
+from scipy import fft
 
 def round_power2(x):
     '''Round up to nearest power of two.'''
@@ -15,14 +16,14 @@ def is_power2(n):
 
 
 def sample_time(f_sample, num_samples):
-    ''' Returns the total signal time in seconds.'''
+    '''Returns the total signal time in seconds.'''
     assert f_sample > 0., 'f_sample must be greater than 0'
     assert num_samples > 0, 'num_samples must be greater than 0'
     return num_samples / f_sample
 
 
 def signal_length(f_sample, t_sec):
-    ''' Returns the signal length in number of samples.'''
+    '''Returns the signal length in number of samples.'''
     assert f_sample > 0., 'f_sample must be greater than 0'
     assert t_sec > 0., 't_sec must be greater than 0'
     return int(f_sample * t_sec)
@@ -78,3 +79,17 @@ def signal_energy(x, t_sec):
     assert x.ndim == 1, 'x must have exactly 1 dimension'
     assert t_sec > 0., 't_sec must be greater than 0'
     return signal_power(x, dB=False) * t_sec
+
+
+def check_parseval(x, length, f_sample, print_eng=False):
+    '''
+    Checks that parsevals theorem is not violated.
+    This is a good sanity check. If parsevals theorem is violated something
+    has gone really bad or is broken.
+    '''
+    time_eng = np.sum(np.abs(x)**2 * length)
+    freq_eng = np.sum(np.abs(fft.fft(x))**2) / f_sample
+    if print_eng:
+        print("\nTime energy:  %.2f" % (time_eng))
+        print("Freq energy:  %.2f" % (freq_eng))
+    assert math.isclose(time_eng, freq_eng), 'parsevals theorem violated'

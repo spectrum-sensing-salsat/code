@@ -27,6 +27,7 @@ def corr(x, l):
         r += np.dot(x[i:i + l], x[i:i + l].conj().T)
     return r / (len(x) - l)
 
+# TODO use eigh since matrix is Hermitian
 
 def mme(x, l=10):
     Rx = corr(x, l)

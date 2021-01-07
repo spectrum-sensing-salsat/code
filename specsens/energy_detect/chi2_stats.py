@@ -14,6 +14,8 @@ def pd(noise_power, signal_power, thr, n, dB=True, bands=1):
     if dB:
         noise_power = util.dB_to_factor_power(noise_power)
         signal_power = util.dB_to_factor_power(signal_power)
+    # noise energy is distributed over all bands, but signal is not
+    # therefore increase SNR by number of bands
     signal_power *= bands
     return 1. - stats.chi2.cdf(2. * thr / (noise_power + signal_power), 2. * n)
 
@@ -28,6 +30,8 @@ def roc(noise_power, signal_power, pfa, n, dB=True, bands=1):
     if dB:
         noise_power = util.dB_to_factor_power(noise_power)
         signal_power = util.dB_to_factor_power(signal_power)
+    # noise energy is distributed over all bands, but signal is not
+    # therefore increase SNR by number of bands
     signal_power *= bands
     return 1. - stats.chi2.cdf(
         stats.chi2.ppf(1. - pfa, 2. * n) /
