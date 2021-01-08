@@ -53,19 +53,22 @@ def print_distribution(eng_both,
                        signal_power,
                        noise_power,
                        threshold,
-                       num_bands,
+                       num_bands=1,
+                       num_est_samples=0,
+                       no_info=False,
                        bins=100):
 
     plt.figure(figsize=(8, 6))
 
     # histogram if we had no information about what is what
-    # plt.hist(np.concatenate((eng_both, eng_noise)),
-    #          bins,
-    #          density=True,
-    #          color='black',
-    #          alpha=0.5,
-    #          aa=True,
-    #          label='No information')
+    if no_info:
+        plt.hist(np.concatenate((eng_both, eng_noise)),
+                 bins,
+                 density=True,
+                 color='black',
+                 alpha=0.5,
+                 aa=True,
+                 label='No information')
 
     # histograms from simulations
     plt.hist(eng_both,
@@ -89,24 +92,39 @@ def print_distribution(eng_both,
     #     plt.axvline(np.mean(eng_noise), c='C1', ls='--', aa=True)
 
     # x values for pdfs
-    x = np.arange(int(np.amin(np.concatenate((eng_both, eng_noise)))),
-                  int(np.amax(np.concatenate((eng_both, eng_noise)))))
-
-    # compute powers
-    noise_pow = util.dB_to_factor_power(noise_power)
-    both_pow = noise_pow + util.dB_to_factor_power(signal_power) * num_bands
+    x = np.linspace(np.amin(np.concatenate((eng_both, eng_noise))),
+                    np.amax(np.concatenate((eng_both, eng_noise))), 1000)
 
     # CLT pdfs
-    noise_dist = stats.norm.pdf(x,
-                                loc=n * noise_pow,
-                                scale=np.sqrt(n * noise_pow**2))
-    both_dist = stats.norm.pdf(x,
-                               loc=n * both_pow,
-                               scale=np.sqrt(n * both_pow**2))
+    if num_est_samples > 0:  # use estimation stats when using estimation
+        snr = util.dB_to_factor_power(signal_power) / util.dB_to_factor_power(
+            noise_power)
+        snr *= num_bands
+        noise_dist = stats.norm.pdf(x,
+                                    loc=1,
+                                    scale=np.sqrt((n + num_est_samples) /
+                                                  (n * num_est_samples)))
+        both_dist = stats.norm.pdf(
+            x,
+            loc=1. + snr,
+            scale=np.sqrt(
+                (n + num_est_samples) / (n * num_est_samples)) * (1 + snr))
+
+    else:  # use the regular stats otherwise
+        noise_pow = util.dB_to_factor_power(noise_power)
+        both_pow = noise_pow + util.dB_to_factor_power(
+            signal_power) * num_bands
+        noise_dist = stats.norm.pdf(x,
+                                    loc=n * noise_pow,
+                                    scale=np.sqrt(n * noise_pow**2))
+        both_dist = stats.norm.pdf(x,
+                                   loc=n * both_pow,
+                                   scale=np.sqrt(n * both_pow**2))
+
     plt.plot(x, both_dist, c='C3', ls='-', aa=True, label='CLT sig present')
     plt.plot(x, noise_dist, c='C4', ls='-', aa=True, label='CLT noise only')
 
-    # Chi2 pdfs
+    # Chi2 pdfs (not usable for noise estimation)
     #     noise_dist = stats.chi2.pdf(x, df=2. * n, loc=0., scale=noise_pow / 2.)
     #     both_dist = stats.chi2.pdf(x, df=2. * n, loc=0., scale=both_pow / 2.)
     #     plt.plot(x, both_dist, c='C3', ls='-', aa=True, label='Chi2 sig present')
@@ -116,12 +134,13 @@ def print_distribution(eng_both,
     plt.grid(linewidth=0.5)
     plt.xlabel('Energy')
     plt.ylabel('Percentages')
+    # plt.autoscale(enable=True, axis='both', tight=True)
     plt.show()
 
     print('---- Distribution stats ----')
-    print('Sig present mean %.2f' % (np.mean(eng_both)))
-    print('Sig absent  mean %.2f' % (np.mean(eng_noise)))
-    print('Sig present var  %.2f' % (np.var(eng_both)))
-    print('Sig absent  var  %.2f' % (np.var(eng_noise)))
-    print('Sig present std  %.2f' % (np.std(eng_both)))
-    print('Sig absent  std  %.2f' % (np.std(eng_noise)))
+    print('Sig present mean: %.4f' % (np.mean(eng_both)))
+    print('Sig absent  mean: %.4f' % (np.mean(eng_noise)))
+    print('Sig present var:  %.4f' % (np.var(eng_both)))
+    print('Sig absent  var:  %.4f' % (np.var(eng_noise)))
+    print('Sig present std:  %.4f' % (np.std(eng_both)))
+    print('Sig absent  std:  %.4f' % (np.std(eng_noise)))

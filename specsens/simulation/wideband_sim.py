@@ -24,8 +24,11 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
                              t_sec=length_sec,
                              seed=seeds[1])
 
+    # local rng
+    rng = np.random.default_rng(seeds[2])
+
     # calculate noise power with uncertainty
-    gen_noise_power = np.random.normal(noise_power, noise_uncert)
+    gen_noise_power = rng.normal(loc=noise_power, scale=noise_uncert)
 
     # store results in 'result' array energies in 'energy' array
     result = np.array([])
@@ -34,14 +37,14 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
     # 'inner' interations loop
     for _ in range(itrs):
 
-        # generate signal (center frequency does not matter with simple ED)
+        # generate signal
         sig = wm.soft(f_center=f_center, power=signal_power, dB=True)
 
         # generate noise
         noise = wgn.signal(power=gen_noise_power, dB=True)
 
         # randomly decide whether signal should be present
-        sig_present = bool(np.random.randint(2))
+        sig_present = rng.choice([True, False])
         if sig_present:
             both = sig + noise
         else:
@@ -59,9 +62,11 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
                                      fft_len=fft_len,
                                      freqs=f)
 
-        # compute energy for all bands but only use 'band_to_detect'
-        # reverse psd in order to fit channel order
-        eng = fed.detect(psd)[band_to_detect]
+        # compute energy for all bands
+        bands = fed.detect(psd)
+
+        # energy detector
+        eng = bands[band_to_detect]
 
         # threshold
         sig_detected = eng > threshold
@@ -79,9 +84,6 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
         # log energy
         energy = np.append(energy, eng)
 
-    # convert to numpy array
-    result = np.asarray(result)
-
     # calculate statistics and store in arrays
     pfa_tmp = np.sum(result == 3) / (np.sum(result == 3) + np.sum(result == 4))
     pd_tmp = np.sum(result == 1) / (np.sum(result == 1) + np.sum(result == 2))
@@ -94,6 +96,7 @@ def wideband_sim(
     itrs=300,  # iterations, number of tests in each environment
     f_sample=1e6,  # in Hz
     signal_power=0.,  # in dB
+    f_center=-1e5,  # signal center frequency
     noise_power=0.,  # in dB
     length_sec=None,  # length of each section in seconds
     num_samples=None,  # number of samples
@@ -105,7 +108,6 @@ def wideband_sim(
     window='box',  # window used with fft
     fft_len=1024,  # samples used for fft
     num_bands=1,  # total number of bands
-    f_center=-1e5,  # signal center frequency
     band_to_detect=0):  # band to 'search' for signal in
 
     # set number of processes used
@@ -137,24 +139,28 @@ def wideband_sim(
     print('Iterations:     %d' % (itrs))
     print('Total iters:    %d' % (gens * itrs))
     print('Signal power:   %.2f dB' % (signal_power))
+    print('Sig cent. freq: %.1f Hz' % (f_center))
     print('Noise power:    %.2f dB' % (noise_power))
     print('Noise uncert:   %.2f dB' % (noise_uncert))
     print('SNR:            %.2f dB' % (signal_power - noise_power))
-    print('Signal length:  %.6f sec' % (length_sec))
+    print('Signal length:  %.6f s' % (length_sec))
     print('Signal samples: %d' % (num_samples))
+    print('FFT length:     %d' % (fft_len))
+    print('Num. of bands:  %d' % (num_bands))
+    print('Band to detect: %d' % (band_to_detect))
 
     # calculate pd (only needed for prints)
     theo_pd = chi2_stats.pd(noise_power,
                             signal_power,
                             threshold,
-                            fft_len // num_bands,
+                            n=fft_len // num_bands,
                             dB=True,
                             num_bands=num_bands)
 
     print('---- Simulation stats theory ----')
-    print('Prob false alarm %.4f' % (theo_pfa))
-    print('Prob detection   %.4f' % (theo_pd))
-    print('Threshold        %.4f' % (threshold))
+    print('Prob false alarm: %.4f' % (theo_pfa))
+    print('Prob detection:   %.4f' % (theo_pd))
+    print('Threshold:        %.4f' % (threshold))
 
     print('---- Running simulation ----')
     print('Using %d processes on %d cores' % (num_procs, mp.cpu_count()))
@@ -164,8 +170,9 @@ def wideband_sim(
     current_time = None  # time variable used for 'runtime_stats'
 
     # generate child seeds for wm and wgn
-    ss = np.random.SeedSequence(seed)
-    seeds = list(zip(ss.spawn(gens), ss.spawn(gens)))
+    seed_seq = np.random.SeedSequence(seed)
+    seeds = list(zip(seed_seq.spawn(gens), seed_seq.spawn(gens),
+                     seed_seq.spawn(gens)))
 
     # prepare parallel execution
     p = mp.Pool(processes=num_procs)
@@ -195,10 +202,10 @@ def wideband_sim(
     engs_noise = energies[np.where(results > 2)[0]]
 
     print('---- Simulation stats ----')
-    print('Prob false alarm theory %.4f' % (theo_pfa))
-    print('Prob false alarm sim    %.4f' % (pfa))
-    print('Prob detection theory   %.4f' % (theo_pd))
-    print('Prob detection sim      %.4f' % (pd))
+    print('Prob false alarm theory: %.4f' % (theo_pfa))
+    print('Prob false alarm sim:    %.4f' % (pfa))
+    print('Prob detection theory:   %.4f' % (theo_pd))
+    print('Prob detection sim:      %.4f' % (pd))
 
     # print the convergence diagrams
     util_sim.print_convergence(gens, pfas, pds, theo_pfa, theo_pd)
