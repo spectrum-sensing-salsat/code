@@ -49,14 +49,15 @@ def print_convergence(gens, pfas, pds, theo_pfa, theo_pd):
 
 def print_distribution(eng_both,
                        eng_noise,
-                       n,
-                       signal_power,
-                       noise_power,
-                       threshold,
+                       n=None,
+                       signal_power=None,
+                       noise_power=None,
+                       threshold=None,
                        num_bands=1,
                        num_est_samples=0,
                        no_info=False,
-                       bins=100):
+                       bins=100,
+                       hist_only=False):
 
     plt.figure(figsize=(8, 6))
 
@@ -91,38 +92,39 @@ def print_distribution(eng_both,
     #     plt.axvline(np.mean(eng_both), c='C0', ls='--', aa=True)
     #     plt.axvline(np.mean(eng_noise), c='C1', ls='--', aa=True)
 
-    # x values for pdfs
-    x = np.linspace(np.amin(np.concatenate((eng_both, eng_noise))),
-                    np.amax(np.concatenate((eng_both, eng_noise))), 1000)
+    if not hist_only:
+        # x values for pdfs
+        x = np.linspace(np.amin(np.concatenate((eng_both, eng_noise))),
+                        np.amax(np.concatenate((eng_both, eng_noise))), 1000)
 
-    # CLT pdfs
-    if num_est_samples > 0:  # use estimation stats when using estimation
-        snr = util.dB_to_factor_power(signal_power) / util.dB_to_factor_power(
-            noise_power)
-        snr *= num_bands
-        noise_dist = stats.norm.pdf(x,
-                                    loc=1,
-                                    scale=np.sqrt((n + num_est_samples) /
-                                                  (n * num_est_samples)))
-        both_dist = stats.norm.pdf(
-            x,
-            loc=1. + snr,
-            scale=np.sqrt(
-                (n + num_est_samples) / (n * num_est_samples)) * (1 + snr))
+        # CLT pdfs
+        if num_est_samples > 0:  # use estimation stats when using estimation
+            snr = util.dB_to_factor_power(signal_power) / util.dB_to_factor_power(
+                noise_power)
+            snr *= num_bands
+            noise_dist = stats.norm.pdf(x,
+                                        loc=1,
+                                        scale=np.sqrt((n + num_est_samples) /
+                                                      (n * num_est_samples)))
+            both_dist = stats.norm.pdf(
+                x,
+                loc=1. + snr,
+                scale=np.sqrt(
+                    (n + num_est_samples) / (n * num_est_samples)) * (1 + snr))
 
-    else:  # use the regular stats otherwise
-        noise_pow = util.dB_to_factor_power(noise_power)
-        both_pow = noise_pow + util.dB_to_factor_power(
-            signal_power) * num_bands
-        noise_dist = stats.norm.pdf(x,
-                                    loc=n * noise_pow,
-                                    scale=np.sqrt(n * noise_pow**2))
-        both_dist = stats.norm.pdf(x,
-                                   loc=n * both_pow,
-                                   scale=np.sqrt(n * both_pow**2))
+        else:  # use the regular stats otherwise
+            noise_pow = util.dB_to_factor_power(noise_power)
+            both_pow = noise_pow + util.dB_to_factor_power(
+                signal_power) * num_bands
+            noise_dist = stats.norm.pdf(x,
+                                        loc=n * noise_pow,
+                                        scale=np.sqrt(n * noise_pow**2))
+            both_dist = stats.norm.pdf(x,
+                                       loc=n * both_pow,
+                                       scale=np.sqrt(n * both_pow**2))
 
-    plt.plot(x, both_dist, c='C3', ls='-', aa=True, label='CLT sig present')
-    plt.plot(x, noise_dist, c='C4', ls='-', aa=True, label='CLT noise only')
+        plt.plot(x, both_dist, c='C3', ls='-', aa=True, label='CLT sig present')
+        plt.plot(x, noise_dist, c='C4', ls='-', aa=True, label='CLT noise only')
 
     # Chi2 pdfs (not usable for noise estimation)
     #     noise_dist = stats.chi2.pdf(x, df=2. * n, loc=0., scale=noise_pow / 2.)

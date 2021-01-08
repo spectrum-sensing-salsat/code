@@ -9,7 +9,7 @@ from specsens.signal.white_gaussian_noise import WhiteGaussianNoise
 from specsens.signal.wireless_microphone import WirelessMicrophone
 from specsens.signal.wideband_signal import WidebandSignal
 from specsens.signal.doppler_signal import DopplerSignal
-# from specsens.signal.bandpass_filter import bandpass_filter
+from specsens.signal import filter
 
 # Enegy Detection
 from specsens.energy_detect.energy_detector import EnergyDetector
@@ -28,14 +28,14 @@ from specsens.plot.spectrum_plot_1d import spectrum_plot_1d
 from specsens.plot.spectrum_plot_2d import spectrum_plot_2d
 from specsens.plot.spectrum_plot_3d import spectrum_plot_3d
 
+# Eigenvalue
+from specsens.eigenvalue_detect.tracy_widom import TracyWidom
+from specsens.eigenvalue_detect import eigen_detector
+from specsens.eigenvalue_detect import eigen_stats
+
 # Simulation
 from specsens.simulation.narrowband_sim import narrowband_sim
 from specsens.simulation.wideband_sim import wideband_sim
 from specsens.simulation.estimation_sim import estimation_sim
-# from specsens.simulation.eigenvalue_sim import eigenvalue_sim
+from specsens.simulation.eigenvalue_sim import eigenvalue_sim
 # from specsens.simulation.combined_sim import combined_sim
-
-# Eigenvalue
-from specsens.eigenvalue_detect.tracy_widom import TracyWidom
-# from specsens.eigenvalue.eigenvalue_detector import todo
-# from specsens.eigenvalue import eig_stats
