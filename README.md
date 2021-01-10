@@ -10,7 +10,7 @@ This repository is split up into two main directories:
 
 The code is written in `python 3.6` using the packages listed in [`requirements.txt`](./requirements.txt). Consider using a [virtual environment](https://docs.python.org/3/tutorial/venv.html). **Ensure that you have matplotlib `3.1.x` installed. Other versions might give weird artifacts. I am still looking into the problem at this point in time.**
 
-#### Step by step installation guide
+### Step by step installation guide
 Starting with a *clean* Ubuntu 18.04 system (should also work with other Linux distributions) you will need to follow these steps:
 - Clone the repository using `git`, run `git clone git@git.tu-berlin.de:salsat/spectrum-sensing.git`
 - Navigate into the repository, run `cd spectrum-sensing`
