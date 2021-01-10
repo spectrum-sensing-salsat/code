@@ -43,23 +43,42 @@ Replace `..` with the path to the `specsens` package, when moving things around.
 
 
 ## Notebooks
-**Coming soon**
+The notebooks provide a visual presentation of the `specsens` package and its functionalities. They allow you to get an overview of what the algorithms are doing in order to better understand them. Feel free to play around with the code and observe the behavior, especially in the simulations.
+- `01_signal_and_noise.ipynb` basic overview over complex signal and noise generation + time domain visualization.
+- `02_simple_energy_detector.ipynb` simple narrow band time domain energy detector.
+- `03_energy_detector_statistics.ipynb` analytical performance statistics overview and comparison (prob. of false alarm, prob. of detection, etc.) ( comparison between Chi-square based statistics and central limit theorem based statistics).
+- `04_energy_detector_simulation.ipynb` simulation using simple energy detector and comparison between analytical and numerical statistics.
+- `05_short_time_fourier_transform.ipynb` short time Fourier transform + frequency domain visualization.
+- `06_wideband_signal.ipynb` wideband signal generation using signal matrix.
+- `06a_doppler_signal.ipynb` wideband doppler signal generation that aims to realistically reproduce doppler shifts.
+- `07_wideband_detect.ipynb` short time fourier transform based wide band energy detection.
+- `07a_wideband_detect_simulation.ipynb` simulation for wide band energy detection.
+- `07b_wideband_detect_doppler.ipynb` wideband detection of doppler singal.
+- `08_edge_detect.ipynb` spectrum edge detection using wavelet transforms.
+- `09_variable_band_detect.ipynb` variable band wideband energy detection using edge detection.
+- `09a_variable_band_detect_doppler.ipynb` variable band wideband energy detection of doppler signal.
+- `10_noise_estimation_simulation.ipynb` energy detection using noise estimation.
+- `11_eigenvalue_detector.ipynb` eigenvalue detector based on covariance matrix.
+- `12_eigenvalue_detector_simulation.ipynb` simulation of eigenvalue detector.
+- `13_eigenvalue_detector_filter.ipynb` eigenvalue detector with bandpass filter.
+- `14_eigenvalue_detector_whitening.ipynb` eigenvalue detector with bandpass filter using noise prewhitening.
+- `15_eigenvalue_whitening_simualtion.ipynb` simulation of eigenvalue detector using bandpass filter and noise prewhitening.
 
 ## TODO
-#### General
+### General
+- [x] Upload first version to gitlab
 - [] Notebook documentation in readme
 - [] Upload papers and create basic paper index that helps to *connect* paper and python implementation
 - [] Documentation for every function using sphinx(not sure if I will do that tho) (https://docs.python-guide.org/writing/documentation/)
 - [] Upload specsens to PyPi
 
 
-#### Functional
+### Functional
 - [] Time space plotting functions. (`time_plot.py`)
 - [] Implement sigmoid detection output
 - [] Add pfa and pd eigenvalue stats
 - [] Create eigenvalue simulation with filter and prewhitening matrix
 - [] Combine eigenvalue detection and noise estimation based energy detection, use energy detection as heuristic and binary search pattern to find *noise only* band to use for noise estimation
-- []
 
 ## Author
 Fabian Peddinghaus <peddinghaus@tu-berlin.de>
