@@ -12,7 +12,8 @@ The code is written in `python 3.6` using the packages listed in [`requirements.
 
 #### Step by step installation guide
 Starting with a *clean* Ubuntu 18.04 system (should also work with other Linux distributions) you will need to follow these steps:
-- Clone the repository using `git`, run `git clone <ssh url>`
+- Clone the repository using `git`, run `git clone git@git.tu-berlin.de:salsat/spectrum-sensing.git`
+- Navigate into the repository, run `cd spectrum-sensing`
 - Ensure you have Python 3, run `python3 --version`
 - Install Python Virtual Environments, run `sudo apt install python3-venv`
 - Install `pip3`, run `sudo apt install python3-pip`
