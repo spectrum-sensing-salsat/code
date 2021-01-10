@@ -15,7 +15,7 @@ def expand_edges(x, percent):
     # extend spectrum at both ends
     x = np.append(x, np.repeat(x[-1], percent_len))
     x = np.insert(x, 0, np.repeat(x[0], percent_len))
-    
+
     return x, percent_len
 
 
@@ -38,7 +38,7 @@ def edge_detector(spec, freq, scale=4, min_height=0.1, min_freq=1e4):
     prod = np.prod(np.abs(coef), axis=0)[m:-m]
     prod = prod / np.max(prod)  # normalize
 
-    # find peaks after multiscale porduct
+    # find peaks after multiscale product
     df = freq[1] - freq[0]
     peak, info = signal.find_peaks(x=prod,
                                    height=min_height,
