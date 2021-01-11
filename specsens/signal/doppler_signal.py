@@ -3,7 +3,7 @@ from scipy import constants
 
 
 class DopplerSignal():
-    def __init__(self, t_sec, f_sample=1e6, f_carrier=450e5, steps=1e3):
+    def __init__(self, t_sec, f_sample=1e6, f_carrier=450e6, steps=1e3):
 
         self.t_sec = t_sec
         self.f_sample = f_sample

@@ -54,8 +54,6 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
         # threshold
         sig_detected = eng > threshold
 
-        # print(sig_present, sig_detected)
-
         # log detection outcome
         if sig_present and sig_detected:
             result = np.append(result, 1)

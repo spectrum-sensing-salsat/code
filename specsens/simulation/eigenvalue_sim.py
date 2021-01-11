@@ -92,8 +92,6 @@ def eigenvalue_sim(
         noise_uncert=0.0,  # standard deviation of the noise normal distribution
         seed=None,  # random seed used for rng
         num_procs=None,  # number of processes to run in parallel
-        num_bands=1,  # total number of bands
-        band_to_detect=0.,  # band to 'search' for signal in
         cov_size=10,  # covariance matrix size
         sampling_factor=1.):  # sampling factor
 
@@ -132,8 +130,6 @@ def eigenvalue_sim(
     print('SNR:            %.2f dB' % (signal_power - noise_power))
     print('Signal length:  %.6f s' % (length_sec))
     print('Signal samples: %d' % (num_samples))
-    #     print('Num. of bands:  %d' % (num_bands))
-    #     print('Band to detect: %d' % (band_to_detect))
 
     # calculate pd (only needed for prints)
     #     theo_pd = est_stats.pd(noise_power,
