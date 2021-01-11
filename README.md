@@ -12,7 +12,7 @@ The code is written in `python 3.6` using the packages listed in [`requirements.
 
 ### Step by step installation guide
 Starting with a *clean* Ubuntu 18.04 system (should also work with other Linux distributions) you will need to follow these steps:
-- Clone the repository using `git`, run `git clone git@git.tu-berlin.de:salsat/spectrum-sensing.git`
+- Clone the repository using `git`, run `git clone git@git.tu-berlin.de:salsat/spectrum-sensing.git` (you will need to have `ssh` with GitLab setup for this to work)
 - Navigate into the repository, run `cd spectrum-sensing`
 - Ensure you have Python 3, run `python3 --version`
 - Install Python Virtual Environments, run `sudo apt install python3-venv`
@@ -58,27 +58,31 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - `09_variable_band_detect.ipynb` variable band wideband energy detection using edge detection.
 - `09a_variable_band_detect_doppler.ipynb` variable band wideband energy detection of doppler signal.
 - `10_noise_estimation_simulation.ipynb` energy detection using noise estimation.
+
+**Under construction:**
 - `11_eigenvalue_detector.ipynb` eigenvalue detector based on covariance matrix.
 - `12_eigenvalue_detector_simulation.ipynb` simulation of eigenvalue detector.
 - `13_eigenvalue_detector_filter.ipynb` eigenvalue detector with bandpass filter.
 - `14_eigenvalue_detector_whitening.ipynb` eigenvalue detector with bandpass filter using noise prewhitening.
 - `15_eigenvalue_whitening_simualtion.ipynb` simulation of eigenvalue detector using bandpass filter and noise prewhitening.
+- `...`
 
 ## TODO
 ### General
 - [x] Upload first version to gitlab
-- [] Notebook documentation in readme
-- [] Upload papers and create basic paper index that helps to *connect* paper and python implementation
-- [] Documentation for every function using sphinx(not sure if I will do that tho) (https://docs.python-guide.org/writing/documentation/)
-- [] Upload specsens to PyPi
+- [ ] Notebook documentation in readme
+- [ ] Upload papers and create basic paper index that helps to *connect* paper and python implementation
+- [ ] Documentation for every function using [sphinx](https://docs.python-guide.org/writing/documentation/) (not sure if I will do that tho, haha)
+- [ ] Upload specsens to PyPi
 
 
 ### Functional
-- [] Time space plotting functions. (`time_plot.py`)
-- [] Implement sigmoid detection output
-- [] Add pfa and pd eigenvalue stats
-- [] Create eigenvalue simulation with filter and prewhitening matrix
-- [] Combine eigenvalue detection and noise estimation based energy detection, use energy detection as heuristic and binary search pattern to find *noise only* band to use for noise estimation
+- [ ] Time space plotting functions. (`time_plot.py`)
+- [ ] Implement sigmoid detection output
+- [ ] Cleanup variable band spectrum sensing
+- [ ] Add pfa and pd eigenvalue stats
+- [ ] Create eigenvalue simulation with filter and prewhitening matrix
+- [ ] Combine eigenvalue detection and noise estimation based energy detection, use energy detection as heuristic and binary search pattern to find *noise only* band to use for noise estimation
 
 ## Author
 Fabian Peddinghaus <peddinghaus@tu-berlin.de>
