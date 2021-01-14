@@ -29,9 +29,9 @@ from specsens.plot.spectrum_plot_2d import spectrum_plot_2d
 from specsens.plot.spectrum_plot_3d import spectrum_plot_3d
 
 # Eigenvalue
-from specsens.eigenvalue_detect.tracy_widom import TracyWidom
 from specsens.eigenvalue_detect import eigen_detector
 from specsens.eigenvalue_detect import eigen_stats
+from specsens.eigenvalue_detect import noise_est
 
 # Simulation
 from specsens.simulation.narrowband_sim import narrowband_sim
