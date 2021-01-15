@@ -58,8 +58,6 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - `09_variable_band_detect.ipynb` variable band wideband energy detection using edge detection.
 - `09a_variable_band_detect_doppler.ipynb` variable band wideband energy detection of doppler signal.
 - `10_noise_estimation_simulation.ipynb` energy detection using noise estimation.
-
-**Under construction:**
 - `11_eigenvalue_detector.ipynb` eigenvalue detector based on covariance matrix.
 - `12_eigenvalue_detector_simulation.ipynb` simulation of eigenvalue detector.
 - `13_eigenvalue_detector_filter.ipynb` eigenvalue detector with bandpass filter.
