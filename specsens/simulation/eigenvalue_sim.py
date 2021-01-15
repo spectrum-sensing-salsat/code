@@ -14,8 +14,8 @@ from specsens import eigen_stats
 
 
 def generation(f_sample, length_sec, itrs, noise_power, signal_power,
-               noise_uncert, threshold, num_bands, f_center, band_to_detect,
-               cov_size, seeds):
+               noise_uncert, threshold, f_center, cov_size, detector_type,
+               seeds):
 
     # create new signal objects
     wm = WirelessMicrophone(f_sample=f_sample, t_sec=length_sec, seed=seeds[0])
@@ -52,8 +52,12 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
         else:
             both = noise
 
-        # maximum-minimum eigenvalue detector
-        eng = eigen_detector.mme(x=both, l=cov_size)
+        if detector_type == 'eme':
+            # energy with minimum eigenvalue
+            eng = eigen_detector.eme(x=both, l=cov_size)
+        else:
+            # maximum-minimum eigenvalue detector
+            eng = eigen_detector.mme(x=both, l=cov_size)
 
         # threshold
         sig_detected = eng > threshold
@@ -79,21 +83,22 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
 
 
 def eigenvalue_sim(
-        gens=50,  # generations, number of environments
-        itrs=300,  # iterations, number of tests in each environment
-        f_sample=1e6,  # in Hz
-        signal_power=0.,  # in dB
-        f_center=-1e5,  # signal center frequency
-        noise_power=0.,  # in dB
-        length_sec=None,  # length of each section in seconds
-        num_samples=None,  # number of samples
-        theo_pfa=0.1,  # probability of false alarm
-        threshold=None,  # threshold used for detection
-        noise_uncert=0.0,  # standard deviation of the noise normal distribution
-        seed=None,  # random seed used for rng
-        num_procs=None,  # number of processes to run in parallel
-        cov_size=10,  # covariance matrix size
-        sampling_factor=1.):  # sampling factor
+    gens=50,  # generations, number of environments
+    itrs=300,  # iterations, number of tests in each environment
+    f_sample=1e6,  # in Hz
+    signal_power=0.,  # in dB
+    f_center=-1e5,  # signal center frequency
+    noise_power=0.,  # in dB
+    length_sec=None,  # length of each section in seconds
+    num_samples=None,  # number of samples
+    theo_pfa=0.1,  # probability of false alarm
+    threshold=None,  # threshold used for detection
+    noise_uncert=0.0,  # standard deviation of the noise normal distribution
+    seed=None,  # random seed used for rng
+    num_procs=None,  # number of processes to run in parallel
+    cov_size=10,  # covariance matrix size
+    sampling_factor=1.,  # sampling factor
+    detector_type='mme'):  # select whether to use mme or eme detector
 
     # set number of processes used
     if num_procs is None:
@@ -114,10 +119,16 @@ def eigenvalue_sim(
 
     # calculate threshold
     if threshold is None:
-        threshold = eigen_stats.mme_thr(Ns=num_samples,
-                                        L=cov_size,
-                                        Pfa=theo_pfa,
-                                        M=sampling_factor)
+        if detector_type == 'eme':
+            threshold = eigen_stats.eme_thr(Ns=num_samples,
+                                            L=cov_size,
+                                            Pfa=theo_pfa,
+                                            M=sampling_factor)
+        else:
+            threshold = eigen_stats.mme_thr(Ns=num_samples,
+                                            L=cov_size,
+                                            Pfa=theo_pfa,
+                                            M=sampling_factor)
 
     print('---- Simulation parameters ----')
     print('Generations:    %d' % (gens))
@@ -130,20 +141,18 @@ def eigenvalue_sim(
     print('SNR:            %.2f dB' % (signal_power - noise_power))
     print('Signal length:  %.6f s' % (length_sec))
     print('Signal samples: %d' % (num_samples))
+    print('Detector type:  %s' % (detector_type))
 
     # calculate pd (only needed for prints)
-    #     theo_pd = est_stats.pd(noise_power,
-    #                            signal_power,
-    #                            threshold,
-    #                            n=fft_len / num_bands,
-    #                            m=(fft_len / num_bands) * noise_est_hist,
-    #                            num_bands=num_bands)
-    theo_pd = float('nan')
+    if detector_type == 'eme':
+        theo_pd = float('nan')
+    else:
+        theo_pd = float('nan')
 
     print('---- Simulation stats theory ----')
     print('Prob false alarm: %.4f' % (theo_pfa))
     print('Prob detection:   %.4f' % (theo_pd))
-    print('Threshold:        %.4f' % (threshold))
+    print('Threshold:        %.8f' % (threshold))
 
     print('---- Running simulation ----')
     print('Using %d processes on %d cores' % (num_procs, mp.cpu_count()))
@@ -160,8 +169,8 @@ def eigenvalue_sim(
     # prepare parallel execution
     p = mp.Pool(processes=num_procs)
     f = partial(generation, f_sample, length_sec, itrs, noise_power,
-                signal_power, noise_uncert, threshold, num_bands, f_center,
-                band_to_detect, cov_size)
+                signal_power, noise_uncert, threshold, f_center, cov_size,
+                detector_type)
 
     # run simulation while showing progress bar
     res = list(tqdm.tqdm(p.imap(f, seeds), total=gens))

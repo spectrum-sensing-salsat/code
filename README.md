@@ -81,6 +81,8 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - [ ] Implement sigmoid detection output
 - [ ] Cleanup variable band spectrum sensing
 - [ ] Add pfa and pd eigenvalue stats
+- [ ] Ensure that pd makes sense
+- [ ] Check why mme behaves so weird
 - [ ] Create eigenvalue simulation with filter and prewhitening matrix
 - [ ] Combine eigenvalue detection and noise estimation based energy detection, use energy detection as heuristic and binary search pattern to find *noise only* band to use for noise estimation
 - [x] Use small eigenvalues for noise estimation

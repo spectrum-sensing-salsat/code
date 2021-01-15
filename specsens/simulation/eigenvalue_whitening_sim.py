@@ -32,7 +32,8 @@ def whitening_samples(f_sample, length_sec, itrs, noise_power, noise_uncert,
     w_mats = np.empty((0, cov_size, cov_size))
 
     # 'inner' interations loop
-    for _ in tqdm.trange(itrs):
+    # for _ in tqdm.trange(itrs):
+    for _ in range(itrs):
 
         # generate noise signal
         noi = wgn.signal(power=0, dB=True)
@@ -56,7 +57,8 @@ def whitening_samples(f_sample, length_sec, itrs, noise_power, noise_uncert,
     diffs = np.array([])
 
     # 'inner' interations loop
-    for _ in tqdm.trange(itrs):
+    # for _ in tqdm.trange(itrs):
+    for _ in range(itrs):
 
         # generate noise signal
         noi = wgn.signal(power=0, dB=True)
@@ -245,12 +247,6 @@ def eigenvalue_whitening_sim(
     print('Band to detect: %d' % (band_to_detect))
 
     # calculate pd (only needed for prints)
-    #     theo_pd = est_stats.pd(noise_power,
-    #                            signal_power,
-    #                            threshold,
-    #                            n=fft_len / num_bands,
-    #                            m=(fft_len / num_bands) * noise_est_hist,
-    #                            num_bands=num_bands)
     theo_pd = float('nan')
 
     print('---- Simulation stats theory ----')

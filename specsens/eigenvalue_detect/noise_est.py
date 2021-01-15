@@ -71,7 +71,7 @@ def mle(c, beta, eigs, var):
                  eigs)))
 
 
-def estimate(x, n, l=50, res=1000, dB=True, prints=True, true_power=None):
+def estimate(x, n, l=50, res=1000, dB=True, prints=False, true_power=None):
     '''Estimate noise power directly from covariance eigenvalues.'''
     assert len(x) == n, 'Length does not match n'
     assert len(x) > l, 'Length cant be smaller than l'
@@ -79,11 +79,12 @@ def estimate(x, n, l=50, res=1000, dB=True, prints=True, true_power=None):
     # claculate covariance matrix
     mat = eigen_detector.corr(x, l)
 
-    plt.figure(figsize=(8, 6))
-    plt.imshow(np.abs(mat))
-    plt.colorbar()
-    plt.title('Matrix eigenvalues')
-    plt.show()
+    if prints:
+        plt.figure(figsize=(8, 6))
+        plt.imshow(np.abs(mat))
+        plt.colorbar()
+        plt.title('Matrix eigenvalues')
+        plt.show()
 
     # get sorted eigenvalues (descending)
     eigs = np.sort(np.abs(linalg.eigvals(mat)))[::-1]

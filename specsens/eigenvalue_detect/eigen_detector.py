@@ -4,7 +4,7 @@ from scipy import linalg
 
 import tqdm
 
-def corr(x, l, prog_bar=True, w_mat=None):
+def corr(x, l, prog_bar=False, w_mat=None):
     '''Return correlation matrix'''
     x = np.reshape(x, (-1, 1))
     r = np.zeros((l, l), dtype=np.complex128)
@@ -22,7 +22,7 @@ def corr(x, l, prog_bar=True, w_mat=None):
 
 
 def whitening_mat(correlated_noise, l=10, prog_bar=False):
-    '''Return whitenning matrix.'''
+    '''Return whitenning matrix'''
     mat_noise_fil = corr(correlated_noise, l=l, prog_bar=prog_bar)
     return np.linalg.inv(linalg.sqrtm(mat_noise_fil))
 
