@@ -155,12 +155,13 @@ def estimate(x, n, l=50, res=1000, dB=True, prints=False, true_power=None):
         v_kde, mp_kde = marchenko_pastur_pdf_list(noise_est_fit_kde, c, res)
         v_mle, mp_mle = marchenko_pastur_pdf_list(noise_est_mle, c, res)
         plt.figure(figsize=(8, 6))
-        plt.hist(noise_eigs, bins=l // 2, density=True, alpha=0.5)
+        plt.hist(noise_eigs, bins=l // 2, density=True, alpha=0.5,
+                 aa=True, label='Eigenvalue distribution')
         plt.plot(v_truth, mp_truth, 'g-', aa=True, label='Actual')
         plt.plot(v_mean, mp_mean, 'r-', aa=True, label='Mean')
         plt.plot(v_hist, mp_hist, 'y-', aa=True, label='Hist')
         plt.plot(v_kde, mp_kde, 'b-', aa=True, label='KDE')
-        plt.plot(v_kde, kde_dist(noise_eigs, v_kde))
+        plt.plot(v_kde, kde_dist(noise_eigs, v_kde), aa=True, label='KDE dist')
         plt.plot(v_mle, mp_mle, 'k-', aa=True, label='MLE')
         plt.grid(linewidth=0.5)
         plt.legend(loc=0)
@@ -174,3 +175,33 @@ def estimate(x, n, l=50, res=1000, dB=True, prints=False, true_power=None):
         noise_est_mle = util.dB_power(noise_est_mle)
 
     return noise_est_mean, noise_est_fit_hist, noise_est_fit_kde, noise_est_mle
+
+
+def estimate_quick(x, n, l=50, res=1000, dB=True):
+    '''Estimate noise power directly from covariance eigenvalues.'''
+    assert len(x) == n, 'Length does not match n'
+    assert len(x) > l, 'Length cant be smaller than l'
+
+    # claculate covariance matrix
+    mat = eigen_detector.corr(x, l)
+
+    # get sorted eigenvalues (descending)
+    eigs = np.sort(np.abs(linalg.eigvals(mat)))[::-1]
+
+    # calculate mdl
+    mdl = list(map(lambda x: mdl_citerion(l, n, eigs, x), np.arange(l)))
+
+    # get optimal m (find first noise eignvalue index)
+    m = np.argmin(mdl)
+
+    # noise only eigenvalues
+    noise_eigs = eigs[m:]
+
+    # estimate noise from mean noise eigenvalues
+    noise_est_mean = np.mean(noise_eigs)
+
+    # return result in dB if requested
+    if dB:
+        noise_est_mean = util.dB_power(noise_est_mean)
+
+    return noise_est_mean

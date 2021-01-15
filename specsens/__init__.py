@@ -39,4 +39,5 @@ from specsens.simulation.wideband_sim import wideband_sim
 from specsens.simulation.estimation_sim import estimation_sim
 from specsens.simulation.eigenvalue_sim import eigenvalue_sim
 from specsens.simulation.eigenvalue_whitening_sim import eigenvalue_whitening_sim
-# from specsens.simulation.combined_sim import combined_sim
+from specsens.simulation.eigenvalue_estimation_sim import eigenvalue_estimation_sim
+from specsens.simulation.estimation_comparison_sim import estimation_comparison_sim

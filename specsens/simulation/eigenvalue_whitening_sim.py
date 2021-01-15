@@ -274,7 +274,6 @@ def eigenvalue_whitening_sim(
 
     pfas = list()  # probability of false alarm list
     pds = list()  # probability of detection list
-    current_time = None  # time variable used for 'runtime_stats'
 
     # generate child seeds for wm and wgn
     seed_seq = np.random.SeedSequence(seed)

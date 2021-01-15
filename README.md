@@ -64,13 +64,15 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - `12_eigenvalue_detector_simulation.ipynb` simulation of eigenvalue detector.
 - `13_eigenvalue_detector_filter.ipynb` eigenvalue detector with bandpass filter.
 - `14_eigenvalue_detector_whitening.ipynb` eigenvalue detector with bandpass filter using noise prewhitening.
-- `15_eigenvalue_whitening_simualtion.ipynb` simulation of eigenvalue detector using bandpass filter and noise prewhitening.
-- `...`
+- `15_eigenvalue_simulation_whitening.ipynb` simulation of eigenvalue detector with bandpass filter and noise prewhitening.
+- `16_eigenvalue_noise_estimation.ipynb` noise power estimation using covariance matrix eigenvalues.
+- `17_eigenvalue_noise_estimation_simulation.ipynb` simulation of wideband energy detection using eigenvalue noise power estimation.
+- `18_noise_estimation_comparison.ipynb` comparison simulation of noise estimation techniques.
 
 ## TODO
 ### General
 - [x] Upload first version to gitlab
-- [ ] Notebook documentation in readme
+- [x] Notebook documentation in readme
 - [ ] Upload papers and create basic paper index that helps to *connect* paper and python implementation
 - [ ] Documentation for every function using [sphinx](https://docs.python-guide.org/writing/documentation/) (not sure if I will do that tho, haha)
 - [ ] Upload specsens to PyPi
@@ -82,8 +84,8 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - [ ] Cleanup variable band spectrum sensing
 - [ ] Add pfa and pd eigenvalue stats
 - [ ] Ensure that pd makes sense
-- [ ] Check why mme behaves so weird
-- [ ] Create eigenvalue simulation with filter and prewhitening matrix
+- [ ] Check why eme behaves so weird (in comparison to mme)
+- [x] Create eigenvalue simulation with filter and prewhitening matrix
 - [ ] Combine eigenvalue detection and noise estimation based energy detection, use energy detection as heuristic and binary search pattern to find *noise only* band to use for noise estimation
 - [x] Use small eigenvalues for noise estimation
 

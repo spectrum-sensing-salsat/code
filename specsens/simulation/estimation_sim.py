@@ -93,7 +93,7 @@ def generation(f_sample, length_sec, itrs, noise_power, signal_power,
 
         # --- very hacky ---
         # compensation for nonlinearity in energy distributions
-        # this just influences / fixes the signal present histogram
+        # this just influences / fixes the histogram plots
         noise2 = wgn.signal(power=noise_power, dB=True)
         both2 = sig + noise2
         f2, psd2 = sft.stft(both2, f_sample, normalized=False, dB=False)
@@ -208,7 +208,6 @@ def estimation_sim(
 
     pfas = list()  # probability of false alarm list
     pds = list()  # probability of detection list
-    current_time = None  # time variable used for 'runtime_stats'
 
     # generate child seeds for wm and wgn
     seed_seq = np.random.SeedSequence(seed)
