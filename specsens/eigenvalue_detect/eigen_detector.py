@@ -9,12 +9,12 @@ def corr(x, l, prog_bar=False, w_mat=None):
     x = np.reshape(x, (-1, 1))
     r = np.zeros((l, l), dtype=np.complex128)
     if prog_bar:
-        for i in tqdm.tqdm(range(0, len(x) - l)):
+        for i in tqdm.tqdm(range(0, len(x) - l + 1)):
             r += np.dot(x[i:i + l], x[i:i + l].conj().T)
     else:
-        for i in range(0, len(x) - l):
+        for i in range(0, len(x) - l + 1):
             r += np.dot(x[i:i + l], x[i:i + l].conj().T)
-    corr_mat = r / (len(x) - l)
+    corr_mat = r / (len(x) - l + 1)
     if w_mat is None:
         return corr_mat
     else:
