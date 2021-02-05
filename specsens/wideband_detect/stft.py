@@ -65,4 +65,4 @@ class Stft:
         # only return first frequency indice list
         f = np.asarray(fl)[0]
 
-        return f, t, xl  # only return first frequency indice list
+        return f, t, xl
