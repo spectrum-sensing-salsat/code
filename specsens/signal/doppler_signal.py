@@ -45,7 +45,7 @@ class DopplerSignal():
 
     def relative_speed(self, distance, velocity):
 
-        # we will assume that the object will be closest to the oberserver at the half the time
+        # we will assume that the object will be closest to the oberserver at half the time
         max_d = self.t[-1] * .5 * velocity
 
         # calculate objects position on its path at every time step
