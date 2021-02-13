@@ -114,6 +114,9 @@ def estimate(x, n, l=50, res=1000, dB=True, prints=False, true_power=None):
     # get optimal m (find first noise eignvalue index)
     m = np.argmin(mdl)
 
+    if l-m <= 1:
+        m -= 1
+
     # noise only eigenvalues
     noise_eigs = eigs[m:]
 

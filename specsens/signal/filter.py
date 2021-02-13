@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import signal
 
-def fir_bandpass(x, f_min, f_max, f_sample, n_taps=255):
+def fir_bandpass(x, f_min, f_max, f_sample, n_taps=64):
     return fir_bandpass_helper(x,
                                f_center=(f_min + f_max) * .5,
                                f_width=np.abs(f_max - f_min),

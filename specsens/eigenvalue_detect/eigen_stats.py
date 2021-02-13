@@ -3,8 +3,8 @@ from scipy import stats
 from scipy import linalg
 import TracyWidom
 
-
 from specsens import util
+
 
 def mme_thr(Ns, L, Pfa=0.1, M=1):
     tw = TracyWidom.TracyWidom(beta=1)
@@ -39,3 +39,11 @@ def eme_thr(Ns, L, Pfa=0.1, M=1):
     fac1 = (2. / (M * Ns))**.5 * stats.norm.isf(Pfa) + 1
     fac2 = Ns / (Ns**.5 - (M * L)**.5)**2
     return fac1 * fac2
+
+
+def eme_pfa():
+    pass
+
+
+def eme_pd():
+    pass
