@@ -945,15 +945,15 @@
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetstrokeopacity{0.800000}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{0.807424in}{2.322222in}}%
-\pgfpathlineto{\pgfqpoint{2.801527in}{2.322222in}}%
-\pgfpathquadraticcurveto{\pgfqpoint{2.829305in}{2.322222in}}{\pgfqpoint{2.829305in}{2.350000in}}%
-\pgfpathlineto{\pgfqpoint{2.829305in}{2.752778in}}%
-\pgfpathquadraticcurveto{\pgfqpoint{2.829305in}{2.780556in}}{\pgfqpoint{2.801527in}{2.780556in}}%
+\pgfpathmoveto{\pgfqpoint{0.807424in}{2.351543in}}%
+\pgfpathlineto{\pgfqpoint{2.680755in}{2.351543in}}%
+\pgfpathquadraticcurveto{\pgfqpoint{2.708532in}{2.351543in}}{\pgfqpoint{2.708532in}{2.379321in}}%
+\pgfpathlineto{\pgfqpoint{2.708532in}{2.752778in}}%
+\pgfpathquadraticcurveto{\pgfqpoint{2.708532in}{2.780556in}}{\pgfqpoint{2.680755in}{2.780556in}}%
 \pgfpathlineto{\pgfqpoint{0.807424in}{2.780556in}}%
 \pgfpathquadraticcurveto{\pgfqpoint{0.779646in}{2.780556in}}{\pgfqpoint{0.779646in}{2.752778in}}%
-\pgfpathlineto{\pgfqpoint{0.779646in}{2.350000in}}%
-\pgfpathquadraticcurveto{\pgfqpoint{0.779646in}{2.322222in}}{\pgfqpoint{0.807424in}{2.322222in}}%
+\pgfpathlineto{\pgfqpoint{0.779646in}{2.379321in}}%
+\pgfpathquadraticcurveto{\pgfqpoint{0.779646in}{2.351543in}}{\pgfqpoint{0.807424in}{2.351543in}}%
 \pgfpathclose%
 \pgfusepath{stroke,fill}%
 \end{pgfscope}%
@@ -964,15 +964,15 @@
 \definecolor{currentstroke}{rgb}{0.298039,0.447059,0.690196}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{0.835201in}{2.669444in}}%
-\pgfpathlineto{\pgfqpoint{1.112979in}{2.669444in}}%
+\pgfpathmoveto{\pgfqpoint{0.835201in}{2.676389in}}%
+\pgfpathlineto{\pgfqpoint{1.112979in}{2.676389in}}%
 \pgfusepath{stroke}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=1.224090in,y=2.620833in,left,base]{\color{textcolor}\rmfamily\fontsize{10.000000}{12.000000}\selectfont Random signal \(\displaystyle f(n)\)}%
+\pgftext[x=1.224090in,y=2.627778in,left,base]{\color{textcolor}\rmfamily\fontsize{10.000000}{12.000000}\selectfont Random signal \(\displaystyle x_n\)}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetrectcap%
@@ -981,15 +981,15 @@
 \definecolor{currentstroke}{rgb}{0.768627,0.305882,0.321569}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{0.835201in}{2.461111in}}%
-\pgfpathlineto{\pgfqpoint{1.112979in}{2.461111in}}%
+\pgfpathmoveto{\pgfqpoint{0.835201in}{2.482716in}}%
+\pgfpathlineto{\pgfqpoint{1.112979in}{2.482716in}}%
 \pgfusepath{stroke}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=1.224090in,y=2.412500in,left,base]{\color{textcolor}\rmfamily\fontsize{10.000000}{12.000000}\selectfont Rectangular window \(\displaystyle g(n)\)}%
+\pgftext[x=1.224090in,y=2.434105in,left,base]{\color{textcolor}\rmfamily\fontsize{10.000000}{12.000000}\selectfont Rectangular window \(\displaystyle g_n\)}%
 \end{pgfscope}%
 \end{pgfpicture}%
 \makeatother%
