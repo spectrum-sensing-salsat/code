@@ -28,7 +28,6 @@ def whitening_mat(correlated_noise, l=10, prog_bar=False):
 
 
 # TODO use eigh since matrix is Hermitian
-
 def mme(x, l=10, w_mat=None):
     '''Maximum-minimum eigenvalue'''
     Rx = corr(x, l, prog_bar=False, w_mat=w_mat)

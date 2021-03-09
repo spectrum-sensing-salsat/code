@@ -33,7 +33,7 @@ class WirelessMicrophone:
         if dB:
             x *= util.dB_to_factor(power)  # set power level using dB
         else:
-            x *= power  # set power level using
+            x *= power  # set power level
         return np.asarray(x)
 
     def silent(self, f_center, power=1., dB=True):

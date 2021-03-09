@@ -42,8 +42,10 @@ def eme_thr(Ns, L, Pfa=0.1, M=1):
 
 
 def eme_pfa():
+    # TODO
     pass
 
 
 def eme_pd():
+    # TODO
     pass
