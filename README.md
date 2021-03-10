@@ -62,8 +62,8 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - `11_eigenvalue_detector.ipynb` eigenvalue detector based on covariance matrix.
 - `12_eigenvalue_detector_simulation.ipynb` simulation of eigenvalue detector.
 - `13_eigenvalue_detector_filter.ipynb` eigenvalue detector with bandpass filter.
-- `14_eigenvalue_detector_whitening.ipynb` eigenvalue detector with bandpass filter using noise prewhitening.
-- `15_eigenvalue_simulation_whitening.ipynb` simulation of eigenvalue detector with bandpass filter and noise prewhitening.
+- `14_eigenvalue_detector_whitening.ipynb` eigenvalue detector with bandpass filter using noise hitening.
+- `15_eigenvalue_simulation_whitening.ipynb` simulation of eigenvalue detector with bandpass filter and noise whitening.
 - `16_eigenvalue_noise_estimation.ipynb` noise power estimation using covariance matrix eigenvalues.
 - `17_eigenvalue_noise_estimation_simulation.ipynb` simulation of wideband energy detection using eigenvalue noise power estimation.
 - `18_noise_estimation_comparison.ipynb` comparison simulation of noise estimation techniques.
@@ -82,7 +82,7 @@ The notebooks provide a visual presentation of the `specsens` package and its fu
 - [ ] Implement sigmoid detection output
 - [ ] Cleanup variable band spectrum sensing
 - [x] Add pfa and pd eigenvalue stats
-- [x] Create eigenvalue simulation with filter and prewhitening matrix
+- [x] Create eigenvalue simulation with filter and whitening matrix
 - [ ] Combine eigenvalue detection and noise estimation based energy detection, use energy detection as heuristic and binary search pattern to find *noise only* band to use for noise estimation
 - [x] Use small eigenvalues for noise estimation
 
